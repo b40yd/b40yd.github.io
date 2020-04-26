@@ -1,0 +1,9 @@
+#+title: 关于我
+#+hugo_base_dir: ../
+#+hugo_section: post
+#+hugo_menu: menu main :name About :weight 12
+
+
+#+begin_quote
+这个家伙很懒！最大的爱好吃喝玩乐!!!
+#+end_quote
