@@ -3,7 +3,7 @@
 #+hugo_section: post
 #+hugo_tags: FreeSoftware
 #+hugo_categories: FreeSoftware
-#+data: <2020-05-16 Sat>
+#+date: <2020-05-16 Sat>
 
 * 为什么会写这篇文章
   今天 hackernews[fn:1] 上 jsiepkes 爆料 github 要求下架 EdgeFS 开源项目分支，理
