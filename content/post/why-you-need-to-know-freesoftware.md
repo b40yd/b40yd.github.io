@@ -7,6 +7,9 @@ categories = ["FreeSoftware"]
 draft = false
 +++
 
+{{< figure src="/ox-hugo/fs-gang.png" >}}
+
+
 ## 为什么会写这篇文章 {#为什么会写这篇文章}
 
   今天 hackernews[^fn:1] 上 jsiepkes 爆料 github 要求下架 EdgeFS 开源项目分支，理

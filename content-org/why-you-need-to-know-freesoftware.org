@@ -5,6 +5,7 @@
 #+hugo_categories: FreeSoftware
 #+date: <2020-05-16 Sat>
 
+[[../../../Pictures/fs-gang.png]]
 * 为什么会写这篇文章
   今天 hackernews[fn:1] 上 jsiepkes 爆料 github 要求下架 EdgeFS 开源项目分支，理
 由是由于上游项目闭源了。
