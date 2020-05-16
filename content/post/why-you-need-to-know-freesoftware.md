@@ -12,7 +12,7 @@ draft = false
 
 ## 为什么会写这篇文章 {#为什么会写这篇文章}
 
-  今天 hackernews[^fn:1] 上 jsiepkes 爆料 github 要求下架 EdgeFS 开源项目分支，理
+  看到 hackernews[^fn:1] 上 jsiepkes 爆料 github 要求下架 EdgeFS 开源项目分支，理
 由是由于上游项目闭源了。
 
   其实，这样的事情不止发生过这一次，而是很多次，包括国内，以前也发生过类似的事情，
