@@ -4,6 +4,7 @@ date = 2017-10-10T00:00:00+08:00
 tags = ["javascript", "js"]
 categories = ["javascript"]
 draft = false
+author = "7ym0n"
 +++
 
 {{< figure src="/javascript.jpg" >}}
@@ -34,7 +35,8 @@ if (window.innerHeight && window.innerWidth){
 
 ### 计算缩放比例 {#计算缩放比例}
 
-对需要缩放的内容进行计算，计算公式：\`容器高度/缩放对象高度 = scale\`。容器是缩放对象的参照物，假设需要缩放 body 里面的 div 矩阵（即缩放对象），那么容器即为 body 本身；例如：
+对需要缩放的内容进行计算，计算公式：\`容器高度/缩放对象高度 = scale\`。容器是缩放对象的参照物，假设需要缩放 body 里面的 div 矩阵（即缩放对象），那么容器即为 body 本身；
+例如：
 
 ```html5
 <div id="panel_container" style="width:1066.656px;height:600px; border: 1px solid;">

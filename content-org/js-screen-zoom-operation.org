@@ -1,4 +1,6 @@
 #+title: js屏幕缩放原理
+#+author: 
+#+hugo_custom_front_matter: :author "7ym0n"
 #+date: <2017-10-10 周二>
 #+hugo_base_dir: ../
 #+hugo_section: post

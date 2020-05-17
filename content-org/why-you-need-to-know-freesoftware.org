@@ -1,5 +1,6 @@
 #+title: 为什么需要了解自由软件，而不只是开源软件
-#+author: "7ym0n"
+#+author: 
+#+hugo_custom_front_matter: :author "7ym0n"
 #+hugo_base_dir: ../
 #+hugo_section: post
 #+hugo_tags: FreeSoftware OpenSource
