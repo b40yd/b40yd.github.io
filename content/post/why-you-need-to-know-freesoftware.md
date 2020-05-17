@@ -1,9 +1,9 @@
 +++
 title = "为什么需要了解自由软件，而不只是开源软件"
-author = ["hacktribe"]
+author = ["7ym0n"]
 date = 2020-05-16T00:00:00+08:00
-tags = ["FreeSoftware"]
-categories = ["FreeSoftware"]
+tags = ["FreeSoftware", "OpenSource"]
+categories = ["FreeSoftware", "OpenSource"]
 draft = false
 +++
 
