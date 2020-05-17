@@ -174,9 +174,9 @@ copyright = "7ym0n"            # default: author.name ↓        # 默认为下�
     pagePV = true
 
   [params.reward]                                         # 文章打赏
-    enable = false
-    wechat = "/path/to/your/wechat-qr-code.png"           # 微信二维码
-    alipay = "/path/to/your/alipay-qr-code.png"           # 支付宝二维码
+    enable = true
+    wechat = "/wxpay.jpg"           # 微信二维码
+    alipay = "/alipay.jpg"           # 支付宝二维码
 
   [params.social]                                         # 社交链接
     a-email = "mailto:bb.qnyd@gmail.com"
