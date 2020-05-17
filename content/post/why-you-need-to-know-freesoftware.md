@@ -130,7 +130,7 @@ author = "7ym0n"
   最后特别感谢，带我入门的朋友们（导师），不是他们的耐心指导，以我的文化水平估计
 是很难进入软件行业（估计不知道在那里混日子），并拥有在这个行业立足的机会。
 
-本文采用 emacs-orgmode 编写，感谢自由软件与开源软件世界的大佬贡献。
+> 本文采用 emacs-orgmode 编写，感谢自由软件与开源软件世界的大佬贡献。
 
 [^fn:1]: <https://news.ycombinator.com/item?id=23113226>
 [^fn:2]: <https://www.gnu.org/philosophy/free-sw.zh-cn.html>
