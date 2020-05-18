@@ -7,7 +7,7 @@ draft = false
 author = "7ym0n"
 +++
 
-{{< figure src="../../../Pictures/fs-gang.png" >}}
+{{< figure src="https://www.scanbuf.net/ox-hugo/fs-gang.png" >}}
 
 
 ## 为什么会写这篇文章 {#为什么会写这篇文章}
