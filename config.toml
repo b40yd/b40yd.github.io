@@ -18,10 +18,10 @@ hasCJKLanguage = true     # has chinese/japanese/korean ? # 自动检测是否�
 paginate = 10                                              # 首页每页显示的文章数
 disqusShortname = ""      # disqus_shortname
 googleAnalytics = "UA-39903197-1"      # UA-XXXXXXXX-X
-copyright = "7ym0n"            # default: author.name ↓        # 默认为下面配置的author.name ↓
+copyright = '7ym0n'            # default: author.name ↓        # 默认为下面配置的author.name ↓
 
 [author]                  # essential                     # 必需
-  name = "7ym0n"
+  name = '7ym0n'
 
 [sitemap]                 # essential                     # 必需
   changefreq = "weekly"
@@ -92,7 +92,7 @@ copyright = "7ym0n"            # default: author.name ↓        # 默认为下�
 
   postMetaInFooter = true   # contain author, lastMod, markdown link, license           # 包含作者，上次修改时间，markdown链接，许可信息
   linkToMarkDown = false    # Only effective when hugo will output .md files.           # 链接到markdown原始文件（仅当允许hugo生成markdown文件时有效）
-  contentCopyright = '<a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a>'     # e.g. '<a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a>'
+  contentCopyright = '<a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span></p><p class="copyright-item" style="text-align: center;"><span class="">关注微信公众号</span></p><p  style="text-align: center;"><span class="item-content"><img src="/hacktribe_258.jpg">'     # e.g. '<a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a>'
 
   changyanAppid = ""        # Changyan app id             # 畅言
   changyanAppkey = ""       # Changyan app key
