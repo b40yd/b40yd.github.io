@@ -17,7 +17,8 @@ author = "7ym0n"
 
 ## 基于特征的检测方式 {#基于特征的检测方式}
 
-该方式的优点是实现原理简单，容易实现，准确率高；缺点就是新型的 webshell 无法检测，需要不断的更新规则库进行完善。由于 webshell 是通过 http 协议进行访问，检测 webshell 常见有两种工作方式：
+该方式的优点是实现原理简单，容易实现，准确率高；缺点就是新型的 webshell 无法检测，需要不断的更新规则库进行完善。由于 webshell 是通过 http 协议进行访问，检测
+webshell 常见有两种工作方式：
 
 -   (WAF)通过 web 应用防火墙进行实时的特征及规则检测
 -   通过特征及规则对目录下文件进行扫描检测
@@ -30,14 +31,17 @@ author = "7ym0n"
 
 ## Yara 规则快速匹配工具 {#yara-规则快速匹配工具}
 
-[Yara](https://github.com/VirusTotal/yar)是一款旨在帮助恶意软件研究人员识别和分类恶意软件样本的开源工具（由 virustotal 的软件工程师 Victor M. Alvarezk 开发），使用 Yara 可以基于文本或二进制模式创建恶意软件家族描述信息，当然也可以是其他匹配信息。
+[Yara](https://github.com/VirusTotal/yar)是一款旨在帮助恶意软件研究人员识别和分类恶意软件样本的开源工具（由
+virustotal 的软件工程师 Victor M. Alvarezk 开发），使用 Yara 可以基于文本或二进制模式创建恶意软件家族描述信息，当然也可以是其他匹配信息。
 
-[Yara](https://github.com/VirusTotal/yara)支持多平台，可以运行在 Windows、Linux、Mac OS X，并通过命令行界面或[yara-python](https://github.com/VirusTotal/yara-python)扩展的 Python 脚本使用。
+[Yara](https://github.com/VirusTotal/yara)支持多平台，可以运行在 Windows、Linux、Mac OS X，并通过命令行界面或
+[yara-python](https://github.com/VirusTotal/yara-python)扩展的 Python 脚本使用。
 
 
 ## Yara 使用 {#yara-使用}
 
-使用 Yara 进行规则匹配时需要两样东西：规则文件和目标文件，目标文件可以是文件、文件夹或进程。[Yara-rules](https://github.com/Yara-Rules/rules)规则，开源社区维护了一个很好的规则库。该库包含恶意软件等规则，这里我们直接使用[webshells\_index.yar](https://github.com/Yara-Rules/rules/blob/master/webshells%5Findex.yar)及 webshells 目录下的规则即可。yara 参数如下：
+使用 Yara 进行规则匹配时需要两样东西：规则文件和目标文件，目标文件可以是文件、文件夹或进程。[Yara-rules](https://github.com/Yara-Rules/rules)规则，开源社区维护了一个很好的规则库。该库包含恶意软件等规则，这里我们直接使用[webshells\_index.yar](https://github.com/Yara-Rules/rules/blob/master/webshells%5Findex.yar)及 webshells 目录下的规则即可。yara
+参数如下：
 
 ```text
 YARA 3.11.0, the pattern matching swiss army knife.
@@ -105,8 +109,7 @@ find ~/webshell/ -type f | wc -l
 
 ## webshell 样本 {#webshell-样本}
 
-[webshell](https://github.com/7ym0n/webshell)的样本在 github 上找到的开源样本。主要用来测试 yara 规则及与商业或开源的其他 webshell 检测工具做对比。
-![](/webshell_detection/20200225123036.png)
+[webshell](https://github.com/7ym0n/webshell)的样本在 github 上找到的开源样本。主要用来测试 yara 规则及与商业或开源的其他 webshell 检测工具做对比。![](/webshell_detection/20200225123036.png)
 
 
 ## 检测结果 {#检测结果}
@@ -117,7 +120,8 @@ find ~/webshell/ -type f | wc -l
 |------|------|------|
 | 1613 | 902  | yara |
 
-随机抽样检测（该结果有一些问题，实际检测出来了，但由于命令行去重处理在 linux 下不能很好识别中文与空格的文件及文件夹名导致的，仅作参考）。
+随机抽样检测（该结果有一些问题，实际检测出来了，但由于命令行去重处理在 linux
+下不能很好识别中文与空格的文件及文件夹名导致的，仅作参考）。
 
 | 样本总数 | 检测结果 | 检测工具 |
 |------|------|------|
