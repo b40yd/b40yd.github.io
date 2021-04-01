@@ -37,7 +37,7 @@ copyright = '7ym0n'            # default: author.name ↓        # 默认为下�
   name = "Archives"
   weight = 20
   identifier = "archives"
-  url = "/post/"
+  url = "/posts/"
 [[menu.main]]
   name = "Tags"
   weight = 30
@@ -155,7 +155,7 @@ copyright = '7ym0n'            # default: author.name ↓        # 默认为下�
     appKey = '你的appKey'
     notify = false  # mail notifier , https://github.com/xCss/Valine/wiki
     verify = false # Verification code
-    avatar = 'mm' 
+    avatar = 'mm'
     placeholder = '说点什么吧...'
     visitor = false
 
@@ -185,7 +185,7 @@ copyright = '7ym0n'            # default: author.name ↓        # 默认为下�
     d-facebook = ""
     e-linkedin = ""
     f-google = ""
-    g-github = ""
+    g-github = "https://github.com/7ym0n"
     h-weibo = ""
     i-zhihu = ""
     j-douban = ""
