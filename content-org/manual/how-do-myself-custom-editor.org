@@ -1,0 +1,34 @@
+#+TITLE: 如何自定义编辑器
+#+AUTHOR:
+#+DATE: 2021-04-01
+#+HUGO_CUSTOM_FRONT_MATTER: :author "7ym0n"
+#+HUGO_BASE_DIR: ../../
+#+HUGO_SECTION: posts/manual
+#+HUGO_AUTO_SET_LASTMOD: t
+#+HUGO_TAGS: Emacs
+#+HUGO_CATEGORIES: Emacs
+#+HUGO_DRAFT: false
+#+HUGO_TOC: true
+
+* 如何自定义编辑器
+- [[/posts/manual/introduction/][简介]]
+- [[/posts/manual/basic][基础知识]]
+- 基本配置
+- 设置代理
+- 依赖包管理
+- 快速编辑
+- Buffer
+- Window
+- 高亮设置
+- 目录操作
+- 自动补全
+- 语法检查
+- 代码补全
+- 代码跳转
+- debugger
+- 项目管理
+- 文件操作
+- git
+- gitflow
+- forge
+- 快捷键归类管理设置
