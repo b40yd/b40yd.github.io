@@ -2,11 +2,10 @@
 title = "如何自定义编辑器"
 author = ["7ym0n"]
 date = 2021-04-01
-lastmod = 2021-04-01T16:09:14+08:00
+lastmod = 2021-04-01T16:31:25+08:00
 tags = ["Emacs"]
 categories = ["Emacs"]
 draft = false
-author = "7ym0n"
 +++
 
 ## 如何自定义编辑器 {#如何自定义编辑器}

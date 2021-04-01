@@ -1,7 +1,6 @@
 #+TITLE: 如何自定义编辑器
 #+AUTHOR: 7ym0n
 #+DATE: 2021-04-01
-#+HUGO_CUSTOM_FRONT_MATTER: :author "7ym0n"
 #+HUGO_BASE_DIR: ../../
 #+HUGO_SECTION: posts/manual
 #+HUGO_AUTO_SET_LASTMOD: t
