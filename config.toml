@@ -37,7 +37,7 @@ copyright = "7ym0n"            # default: author.name ↓        # 默认为下�
   name = "Archives"
   weight = 20
   identifier = "archives"
-  url = "/posts/"
+  url = "/post/"
 [[menu.main]]
   name = "Tags"
   weight = 30
@@ -52,7 +52,7 @@ copyright = "7ym0n"            # default: author.name ↓        # 默认为下�
   name = "Editor"
   weight = 50
   identifier = "editor"
-  url = "/posts/manual/how-do-myself-custom-editor/"
+  url = "/post/manual/how-do-myself-custom-editor/"
 
 [params]
   author = "7ym0n"
