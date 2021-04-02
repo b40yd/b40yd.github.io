@@ -1,7 +1,7 @@
 +++
 title = "背景介绍"
 date = 2021-04-01
-lastmod = 2021-04-02T10:51:25+08:00
+lastmod = 2021-04-02T11:06:30+08:00
 tags = ["Emacs", "编辑器"]
 categories = ["Emacs", "编辑器"]
 draft = false
@@ -22,4 +22,6 @@ author = "7ym0n"
 
 ## 效果预览 {#效果预览}
 
-{{< figure src="/manual/emacs-on-windows.png" >}}
+在 **Windows 10** 上运行效率奇差，在 **Linux** 机械硬盘的系统上完整启动大致在3-4秒，第一次启动稍微慢1秒左右，两个系统下的差距确实很大, 应该是 **Windows** 上运行时，使用的并不是原生操作系统的 **API** 。相关 **mode** 补全插件第一次启动也是奇慢无比，特别是
+**Org-mode** 和 **lsp-mode** 相关操作会卡很久，第一次启动成功后，后面操作基本上不卡，很顺滑，如果能忍受第一次启动的龟速，那么还是可以在 **Windows** 上使用，我现在就是在 **Windows** 使用 **Org-mode** 上写的这段内容。
+![](/manual/emacs-on-windows.png)
