@@ -1,4 +1,4 @@
-#+TITLE: 背景介绍
+#+TITLE: 背景介绍 - 如何自定义编辑器
 #+AUTHOR:
 #+DATE: 2021-04-01
 #+HUGO_CUSTOM_FRONT_MATTER: :author "7ym0n"

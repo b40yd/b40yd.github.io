@@ -1,4 +1,4 @@
-#+TITLE: 基础知识
+#+TITLE: 基础知识 - 如何自定义编辑器
 #+AUTHOR:
 #+DATE: 2021-04-01
 #+HUGO_CUSTOM_FRONT_MATTER: :author "7ym0n"
@@ -11,4 +11,5 @@
 #+HUGO_TOC: true
 
 * 入门介绍
-:TODO:
+主要了解Elisp语言的基础语法，好处就是可以自己写程序解决遇到的一些使用问题，包括读懂别人的配置。让自己对自己的编辑器了如
+指掌。
