@@ -10,7 +10,7 @@
 #+HUGO_DRAFT: false
 #+HUGO_TOC: true
 
-* 如何自定义编辑器
+* 目录索引
 - [[/post/manual/introduction/][简介]]
 - [[/post/manual/basic][基础知识]]
 - 基本配置

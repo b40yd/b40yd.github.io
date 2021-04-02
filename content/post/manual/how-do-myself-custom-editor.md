@@ -1,14 +1,14 @@
 +++
 title = "如何自定义编辑器"
 date = 2021-04-01
-lastmod = 2021-04-02T09:54:44+08:00
+lastmod = 2021-04-02T09:58:32+08:00
 tags = ["Emacs"]
 categories = ["Emacs"]
 draft = false
 author = "7ym0n"
 +++
 
-## 如何自定义编辑器 {#如何自定义编辑器}
+## 目录索引 {#目录索引}
 
 -   [简介](/post/manual/introduction/)
 -   [基础知识](/post/manual/basic)
