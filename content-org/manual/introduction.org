@@ -30,4 +30,9 @@
 很大, 应该是 *Windows* 上运行时，使用的并不是原生操作系统的 *API* 。相关 *mode* 补全插件第一次启动也是奇慢无比，特别是
 *Org-mode* 和 *lsp-mode* 相关操作会卡很久，第一次启动成功后，后面操作基本上不卡，很顺滑，如果能忍受第一次启动的龟速，那么还
 是可以在 *Windows* 上使用，我现在就是在 *Windows* 使用 *Org-mode* 上写的这段内容。
+
+On Windows:
 [[file:../../static/manual/emacs-on-windows.png]]
+
+On Linux:
+[[file:../../static/manual/emacs-on-linux.png]]

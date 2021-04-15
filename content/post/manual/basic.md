@@ -1,7 +1,7 @@
 +++
 title = "基础知识 - 如何自定义编辑器"
 date = 2021-04-01
-lastmod = 2021-04-02T11:26:06+08:00
+lastmod = 2021-04-15T21:33:42+08:00
 tags = ["Emacs"]
 categories = ["Emacs"]
 draft = false
@@ -10,4 +10,738 @@ author = "7ym0n"
 
 ## 入门介绍 {#入门介绍}
 
-主要了解Elisp语言的基础语法，好处就是可以自己写程序解决遇到的一些使用问题，包括读懂别人的配置。让自己对自己的编辑器了如指掌。
+主要了解 **Elisp** 语言的基础语法，好处就是可以自己写程序解决遇到的一些使用问题，包括读懂别人的配置。让自己对自己的编辑器了如指掌。
+
+**注意：** 本章只介绍基础使用知识，如果需要深入了解学习，建议参考[官方手册](https://www.gnu.org/software/emacs/manual/html%5Fnode/elisp/)。
+
+
+## Hello,World! {#hello-world}
+
+按照编程惯例，都喜欢使用这句话作为编程的第一次试验，这里也就不免俗了^\_^!。
+
+首先启动 **Emacs**,在没有任何配置的环境下，在\*scratch\*缓冲区输入以下代码，并移动光标至当前行尾按下 `C-x C-e`[^fn:1] 快捷键执行以下代码。同时可以用 **eval-region** 高级命令,首先按下 `C-S-@`[^fn:1] 快捷键标记，可以按方向键或者使用 `C-p` 、 `C-n` 、 `C-f` 、 `C-b`
+上下左右移动选中以下代码，再按下 `M-x`[^fn:2] 输入 **eval-region** 命令即可执行,默认有一个 `C-M-x` 快捷键可以直接运行，前提是光标要在标记的内容最后一个字符后面。
+
+```emacs-lisp
+(message "Hello,World!")
+```
+
+在最下面当前 **Minibuffer** 会显示这条字符串。如果显示该字符串，则成功执行，否则会提示相应错误。也可以切换至\*Messages\*缓冲区查看，通过 `C-x b`[^fn:1] 切换。
+
+如图：
+![](/manual/hello-world.png)
+
+
+## 数据类型 {#数据类型}
+
+内建的 **Elisp** 数据类型称为 `primitive types` ，包括整数、浮点数、 `cons` 、符号(`symbol`)、字符串、向量(`vector`)、散列表
+(`hash-table`)。每一种数据类型基本上有对应的 `syntax-rules` ，让解释器解析这种数据类型。
+
+
+### number {#number}
+
+数字分为整数和浮点数 **注意**: `elisp` 中没有双精度数。1， 1.，+1, -1, 536870913, 0, -0 这些都是整数。1500.0, 15e2, 15.0e2,
++1500000e-3, 和 .15e4 都可以用来表示一个浮点数 1500.。遵循 `IEEE` 标准， `elisp` 也有一个特殊类型的值称为 `NaN` (`not-a-number`)。你可以用 `(/ 0.0 0.0)` 产生这个数。
+
+数字的表示支持36进制的数字，因为只有 `0-9` 和 `a-z` 36 个字符来表示数字。
+
+```emacs-lisp
+#b101100            ; => 44  二进制
+#o54                ; => 44  八进制
+#x2c                ; => 44  十进制
+#24r1k              ; => 44  二十四进制
+```
+
+判断是否为数字等，可以使用一些内置的数字测试函数，如下：
+
+```emacs-lisp
+(integerp 1.)                           ; => t
+(integerp 1.0)                          ; => nil
+(floatp 1.)                             ; => nil
+(floatp -0.0e+NaN)                      ; => t
+(numberp 1)                             ; => t
+(bignump 1)                             ; => nil
+(fixnump 1)                             ; => t
+```
+
+判断两个数字值是否相等，使用 `=` 号，不能使用 `eql` ， `equal` ， `sxhash-eql` ， `sxhash-equal` 和 `gethash` 函数。当使用 `equal` 比较判断 `x` 和 `y` 是相同的 `NaN` 时，返回 `t` ，使用 `=` 比较判断则返回 `nil` ，相反使用 `equal` 比较判断数值时，返回 `nil` ，而使用 `=` 则返回 `t` ， `eql` 测试数字的值是否相等，还测试数字类型是否一致。例如：
+
+```emacs-lisp
+(equal x y)                   ; => t
+(= x y)                       ; => nil
+(equal 0.0 -0.0)              ; => nil
+(= 0.0 -0.0)                  ; => t
+(= 1.0 1)                     ; => t
+(eql 1.0 1)                   ; => nil
+```
+
+常用的比较操作符号是我们在其它语言中都很熟悉的，比如 `<` ， `>` ， `>=` ， `<=` ，不一样的是，由于赋值是使用 `set` 函数，所以 `=` 不再是一个赋值运算符了，而是测试数字相等符号。和其它语言类似，对于浮点数的相等测试都是不可靠的，取反使用的是 `not` 而不是 `!`
+,不等于可以使用 `/=` 判断。
+
+```emacs-lisp
+(/= 1 2)                      ; => t
+(not (= 1 2))                 ; => t
+```
+
+整数向浮点数转换是通过 `float` 函数进行的。而浮点数转换成整数,内置有以下几个函数：
+
+-   `truncate` 转换成靠近 `0` 的整数
+-   `floor` 转换成最接近的不比本身大的整数
+-   `ceiling` 转换成最接近的不比本身小的整数
+-   `round` 四舍五入后的整数，换句话说和它的差绝对值最小的整数
+
+三角运算有函数： `sin`, `cos`, `tan`, `asin`, `acos`, `atan` 。开方函数是 `sqrt` 。
+
+`exp` 是以 `e` 为底的指数运算， `expt` 可以指定底数的指数运算。 `log` 默认底数是 `e` ，但是也可以指定底数。 `log10` 就是 `(log x 10)`
+。~logb~ 是以 2 为底数运算，但是返回的是一个整数。这个函数是用来计算数的位。
+
+`random` 可以生成随机数。可以用 `(random t)` 来产生一个新种子。注意： `emacs` 每次启动后调用 `random` 总是产生相同的随机数，在运行过程中，可以调用多次，不需要重新通过 `(random t)` 来产生新的种子。
+
+
+### string {#string}
+
+字符串是有序的字符数组，与其他语言不同的是， `elisp` 中字符串可以是任意字符，包括 `\0` 。
+
+```emacs-lisp
+(setq foo "abc\000abc")                 ; => "abc^@abc"
+```
+
+字符串的字符其实就是一个整数。一个字符 `A` 就是一个整数 65。但是目前字符串中的字符被限制在 0-524287 之间。字符的读入语法是在字符前加上一个问号，比如 `?A` 代表字符 `A` 。
+
+```emacs-lisp
+?A                                      ; => 65
+?a                                      ; => 97
+```
+
+字符同样可以是一些符号，控制字符，退格、制表符，换行符，垂直制表符，换页符，空格，回车，删除和 `escape` 。注意有些字符有歧义，所以需要使用 ~\\~转义。如：
+
+```emacs-lisp
+?\a ; => 7                 ; control-g, `C-g'
+?\b ; => 8                 ; backspace, <BS>, `C-h'
+?\t ; => 9                 ; tab, <TAB>, `C-i'
+?\n ; => 10                ; newline, `C-j'
+?\v ; => 11                ; vertical tab, `C-k'
+?\f ; => 12                ; formfeed character, `C-l'
+?\r ; => 13                ; carriage return, <RET>, `C-m'
+?\e ; => 27                ; escape character, <ESC>, `C-['
+?\s ; => 32                ; space character, <SPC>
+?\\ ; => 92                ; backslash character, `\'
+?\d ; => 127               ; delete character, <DEL>
+```
+
+控制字符可以有多种表示方式，比如 `C-i` ，可以使用以下表示：
+
+```emacs-lisp
+?\^I
+?\^i
+?\C-I
+?\C-i
+```
+
+字符串测试使用 `stringp` 。 `string-or-null-p` 当对象是一个字符或 `nil` 时返回 `t` 。 `char-or-string-p` 测试是否是字符串或者字符类型。
+
+同一个字符构造一个字符串，可以使用 `make-string` 。 不同字符的字符串可以使用 `string` 。
+
+```emacs-lisp
+(make-string 5 ?A)            ; => "AAAAA"
+(string ?a ?b ?c)             ; => "abc"
+```
+
+字符串切片操作可以使用 `substring` , 支持正序和倒序（使用负数）。
+
+```emacs-lisp
+(substring "0123456789" 3)     ; => "3456789"
+(substring "0123456789" 1 3)   ; => "123"
+(substring "0123456789" -2 -1) ; => "8"
+(substring "0123456789" 0 -6)  ; => "0123"
+```
+
+字符串分割使用 `split-string` 默认使用空格分割，同时可以指定 `split-string-default-separators` 保留一个空字符，同时支持指定某个字符或者使用正则表达式来作为分割符。例如：
+
+```emacs-lisp
+(split-string "  two words ")                                    ; => ("two" "words")
+(split-string "  two words " split-string-default-separators)    ; => ("" "two" "words" "")
+(split-string "aooob" "o*")                                      ; => ("" "a" "" "b" "")
+(split-string "ooaboo" "o*")                                     ; => ("" "" "a" "b" "")
+(split-string "Soup is good food" "o+")                          ; => ("S" "up is g" "d f" "d")
+(split-string "ooo" "\\|o+" t)                                   ; => ("o" "o" "o")
+```
+
+拼接字符串使用 `concat` ,可以使两个字符串拼接成一个。
+
+```emacs-lisp
+(concat "123" "abc")  ; => "123abc"
+```
+
+字符串比较：
+
+-   `char-equal` 比较两个字符是否相等,区分大小写。
+-   `string=` 字符串比较， `string-equal` 是一个别名。
+-   `string<` 是按字典序比较两个字符串， `string-less` 是它的别名。
+-   `string>` 最新版本包含该函数，旧版本没有。文档里面只有 `string-greaterp` 函数。
+-   `string-prefix-p`
+-   `string-suffix-p`
+
+字符串转换，字符串与数字之间的相互转换。
+
+-   `string-to-number` 字符串转数字
+-   `number-to-string` 数字转字符串
+
+字符串转换其他进制可以使用 `format` 函数，该函数主要用于格式化字符串。
+
+```emacs-lisp
+(format "%#o" 256)     ; => "0400" 八进制
+(format "%#x" 256)     ; => "0x100" 十六进制
+```
+
+字符串与向量、列表互相转换。
+
+```emacs-lisp
+(concat '(?a ?b ?c ?d ?e))              ; => "abcde"
+(concat [?a ?b ?c ?d ?e])               ; => "abcde"
+(vconcat "abdef")                       ; => [97 98 100 101 102]
+(append "abcdef" nil)                   ; => (97 98 99 100 101 102)
+```
+
+大小写转换使用的是 `downcase` 和 `upcase` 两个函数。这两个函数的参数既可以字符串，也可以是字符。 `capitalize` 可以使字符串中单词的第一个字符大写，其它字符小写。 `upcase-initials` 只使第一个单词的第一个字符大写，其它字符小写。
+
+```emacs-lisp
+(downcase "The cat in the hat")         ; => "the cat in the hat"
+(downcase ?X)                           ; => 120
+(upcase "The cat in the hat")           ; => "THE CAT IN THE HAT"
+(upcase ?x)                             ; => 88
+(capitalize "The CAT in tHe hat")       ; => "The Cat In The Hat"
+(upcase-initials "The CAT in the hAt")  ; => "The CAT In The HAt"
+```
+
+`string-match` 查找字符串，支持正则表达式字符串。 `string-match` 在查找的同时，还会记录下每个匹配到的字符串的位置。这个位置可以在匹配后用 `match-data` 、 `match-beginning` 和 `match-end` 等函数来获得相应数据。
+
+```emacs-lisp
+(string-match "3\\(4\\)" "01234567890123456789")
+(match-end 0)
+;; 查找所有
+(let ((start 0))
+  (while (string-match "34" "01234567890123456789" start)
+    (message (format "find at %d\n" (match-beginning 0)))
+    (setq start (match-end 0))))
+```
+
+替换使用的函数是 `replace-match` ，字符串替换相关操作有一点复杂，需要重新计算，查找和替换字符串用到了，目前还没学习到的基本语法，可以跳过这部分。
+
+```emacs-lisp
+;; 替换匹配到的所有字符串
+(let ((str "01234567890123456789")
+      (start 0))
+  (while (string-match "1234" str start)
+    (setq str (replace-match "xxxx" nil nil str 0))
+    (setq start (match-end 0)))
+  (message str))
+```
+
+解析文本时一个很常用的操作是把字符串按分隔符分解，可以用 `split-string` 函数：
+
+```emacs-lisp
+(split-string "key = val" "\\s-*=\\s-*")  ; => ("key" "val")
+```
+
+与 `split-string` 对应是把几个字符串用一个分隔符连接起来，这可以用 `mapconcat` 高阶函数完成。比如：
+
+```emacs-lisp
+(mapconcat 'identity '("a" "b" "c") "\t") ; => "a   b   c"
+```
+
+`identity` 是一个特殊的函数，它会直接返回参数。
+
+
+### list {#list}
+
+`cons cell` 就是两个有顺序的元素。第一个叫 `CAR` ，第二个就 `CDR` 。 `CAR` 和 `CDR` 名字来自于 `Lisp` 。 `cons cell` 也就是
+`construction of cells` 。 `car` 函数用于取得 `cons cell` 的 `CAR` 部分， `cdr` 取得 `cons cell` 的 `CDR` 部分。 `cons cell` 非常简单，但是它却能衍生出许多高级的数据结构，比如链表、树、关联表等等。 使用 `.` 分隔两个部分，如下：
+
+```emacs-lisp
+'(1 . 2)                                ; => (1 . 2)
+'(?a . 1)                               ; => (97 . 1)
+'(1 . "a")                              ; => (1 . "a")
+'(1 . nil)                              ; => (1)
+'(nil . nil)                            ; => (nil)
+```
+
+`'` 别名是 `quote` 表示自求值， `quote` 函数返回参数本身不做求值计算。列表包括了 `cons cell` 。但是列表中有一个特殊的元素──空表
+`nil` 。注意， `nil` 没有 `car` 和 `cdr` 部分，即使对其取值，返回还是 `nil` ，类似其他语言，如C语言 `NULL` 表示空值，如下：
+
+```emacs-lisp
+nil                                     ; => nil
+'()                                     ; => nil
+(car nil)                               ; => nil
+(cdr nil)                               ; => nil
+```
+
+测试一个 `cons cell` 用 `consp` ，是否是列表用 `listp` 。
+
+```emacs-lisp
+(consp '(1 . 2))                        ; => t
+(consp '(1 . (2 . nil)))                ; => t
+(consp nil)                             ; => nil
+(listp '(1 . 2))                        ; => t
+(listp '(1 . (2 . nil)))                ; => t
+(listp nil)                             ; => t
+```
+
+生成一个 `cons cell` 使用 `cons` ，列表用 `list` 或者直接使用 `quote` 。
+
+```emacs-lisp
+(cons 1 2)                                ; => (1 . 2)
+(cons 1 '())                              ; => (1)
+(cons (list 1 2) (list 3 4))              ; => ((1 2) 3 4)
+(cons '(1 2) 3)                           ; => ((1 2) . 3)
+(list 1 2)                                ; => (1 2)
+'(1 2)                                    ; => (1 2)
+'(1 . 2)                                  ; => (1 . 2)
+```
+
+向 `list` 追加元素并改变原列表可以使用 `push` 弹出一个元素使用 `pop` ，这两个宏可以看作堆栈，都是先进后出。拼接列表直接使用 `cons` 或者在列表末尾拼接使用 `append` 。
+
+```emacs-lisp
+(setq x '(1 2))                         ; => (1 2)
+(push '0 x)                             ; => (0 1 2)
+(pop x)                                 ; => 0
+(append '(3 2) x)                       ; => (3 2 1 2)
+
+```
+
+访问列表的第 `n` 个元素，使用 `nth` 函数：
+
+```emacs-lisp
+(nth 3 '(0 1 2 3 4 5))                  ; => 3
+```
+
+获得列表一个区间的函数有 `nthcdr` 、 `last` 和 `butlast` 。 `nthcdr` 和 `last` 比较类似，它们都是返回第 `n` 个元素后面的所有元素。 `nthcdr` 函数返回第 `n` 个元素后的列表：
+
+```emacs-lisp
+(nthcdr 2 '(0 1 2 3 4 5))               ; => (2 3 4 5)
+```
+
+`last` 函数返回倒数第 `n` 个长度的列表：
+
+```emacs-lisp
+(last '(0 1 2 3 4 5) 2)                 ; => (4 5)
+```
+
+`butlast` 和前两个函数不同，返回的除了倒数第 `n` 个元素的列表。
+
+```emacs-lisp
+(butlast '(0 1 2 3 4 5) 2)              ; => (0 1 2 3)
+```
+
+反转列表使用 `reverse` 函数，该函数返回新的列表，还有一个 `nreverse` 具有破坏性的反转列表函数，使用该函数会修改原列表顺序。
+
+```emacs-lisp
+(reverse '(a b c))                      ; => (c b a)
+(nreverse '(a b c))                     ; => (c b a)
+```
+
+列表排序使用 `sort` ，注意该函数同样是破坏性的操作，如果需要保留原来的列表，需要进行值拷贝。
+
+```emacs-lisp
+(sort '(3 5 4 1 2) '<)                  ; => (1 2 3 4 5)
+```
+
+判断元素是否在列表中使用 `memq` 或 `member` 。
+
+```emacs-lisp
+(memq 3 '(1 2 3))                       ; => (3)
+(member 3 '(1 2 3))                     ; => (3)
+```
+
+列表元素去重使用 `delete-dups` 。
+
+```emacs-lisp
+(delete-dups '(1 1 2 2 3 3))            ; => (1 2 3)
+```
+
+删除指定元素使用 `remq` 、 `remove` 、 `delq` 和 `delete` 。
+
+```emacs-lisp
+(delq 1 '(1 2 3))                       ; => (2 3)
+(delete 1 '(1 2 3))                     ; => (2 3)
+(remq 1 '(1 2 3))                       ; => (2 3)
+(remove 1 '(1 2 3))                     ; => (2 3)
+```
+
+关联列表(`association list`)，类似其他语言的 `hash table` ， `elisp` 中也有 `hash table` ，不过 `hash table` 相比于 `association list` 至少以下缺点：
+
+-   `hash table` 里的关键字（ `key` ）是无序的，而 `association list` 的关键字 可以按想要的顺序排列。
+-   `hash table` 没有列表那样丰富的函数，只有一个 `maphash` 函数可以遍历列表。而 `association list` 就是一个列表，所有列表函数都能适用。
+-   `hash table` 没有读入语法和输入形式，这对于调试和使用都带来很多不便。
+
+<!--listend-->
+
+```emacs-lisp
+(assoc "a" '(("a" 97) ("b" 98)))                  ; => ("a" 97)
+(assq 'a '((a . 97) (b . 98)))                    ; => (a . 97)
+(assoc-default "a" '(("a" 97) ("b" 98)))          ; => (97)
+```
+
+可以 `rassoc` 和 `rassq` 来根据数据查找键值，也就是使用键值（ `key` ）对应的数据查找键值。
+
+```emacs-lisp
+(rassoc '(97) '(("a" 97) ("b" 98)))     ; => ("a" 97)
+(rassq '97 '((a . 97) (b . 98)))        ; => (a . 97)
+```
+
+用 `setcdr` 来更改键值对应的数据，注意 `progn` 用来执行多条语句，暂时不用理会，后面会介绍。
+
+```emacs-lisp
+(progn
+  (setq foo '(("a" . 97) ("b" . 98)))
+  (setcdr (assoc "a" foo) "this is a")
+  foo)                                            ; => (("a" . "this is a") ("b" . 98))
+```
+
+遍历列表最常用的函数就是 `mapc` 和 `mapcar` 、 `dolist` 。
+
+```emacs-lisp
+(mapc '1+ '(1 2 3))                     ; => (1 2 3)
+(mapcar '1+ '(1 2 3))                   ; => (2 3 4)
+(dolist (foo '(1 2 3))
+  (message "%s" foo))
+```
+
+注意： `memq` 、 `member` 、 `delq` 、 `delete` 、 `assq` 和 `assoc` 这些函数，它们分别使用 `eq` 和 `equal` 两种方法。
+
+
+### symbol {#symbol}
+
+符号主要具有以下特性:
+
+-   符号名字
+-   变量
+-   函数
+-   属性列表
+
+测试是否是符号使用 `symbolp` 。符号名字可以含有任何字符。大多数的符号名字只含有字母、数字和标点 `-+=*/` 。这样的名字不需要其它标点。名字前缀要足够把符号名和数字区分开来，如果需要的话，可以在前面用 `\` 表示为符号，比如：
+
+```emacs-lisp
+(symbolp 'a)       ; => t
+(symbolp '+1)                           ; => nil
+(symbolp '\+1)                          ; => t
+(symbol-name '\+1)                      ; => "+1"
+```
+
+符号名是区分大小写的。
+
+```emacs-lisp
+(eq 'a 'a)                              ; => t
+(eq 'a 'A)                              ; => nil
+```
+
+符号名必須是唯一的，所以一定会有一个表与名字关联，这个表在 `elisp` 里称为 `obarray` 。创建一个符号时，首先会对这个名字求
+`hash` 值,当 `elisp` 读入一个符号时，通常会先查找这个符号是否在 `obarray` 里，如果没有则会把这个符号加入到 `obarray` 。这样查找并加入一个符号的过程称为是 `intern` 。 `intern` 函数可以查找或加入到 `obarray` ，返回对应的符号。默认是全局的 `obarray` ，也可以指定一个 `obarray` 。 `intern-soft` 与 `intern` 不同的是，当名字不在 `obarray` 里时， `intern-soft` 会返回 `nil` ，而 `intern` 会加入到 `obarray` 里，除去 `obarray` 里的符号，可以用 `unintern` 函数。
+
+```emacs-lisp
+(setq foo (make-vector 100 0))           ; => [0 0 0 0 0 0 0 0 0 0]
+(intern-soft "test" foo)                 ; => nil
+(intern "test" foo)                      ; => test
+(intern-soft "test" foo)                 ; => test
+(unintern "test" foo)                    ; => t
+(intern-soft "test" foo)                 ; => nil
+(symbol-value 'abc)
+```
+
+符号的名字，可以用 `symbol-name` , 符号的值使用 `symbol-value` ，符号函數使用 `symbol-function` ， 可以用 `fboundp` 测试一个符号是否绑定函数，属性列表( `property list` )。通常属性列表用于存储和符号相关的信息，比如变量和函数的文档，定义的文件名和位置，语法类型，可以使用 `put` 和 `get` 设置获取，用 `symbol-plist` 得到所有的属性列表。
+
+```emacs-lisp
+(symbol-name (intern "test" foo))
+(set (intern "test" foo) "abc")
+(symbol-value (intern-soft "test" foo))          ; => "abc"
+(symbol-function 'buffer-file-name)              ; => #<subr buffer-file-name>
+(fboundp 'car)                                   ; => t
+(put (intern "abc" foo) 'doc "this is abc")      ; => "this is abc"
+(get (intern "abc" foo) 'doc)                    ; => "this is abc"
+(symbol-plist (intern "abc" foo))                ; => (doc "this is abc")
+```
+
+
+## 变量 {#变量}
+
+`elisp` 的变量有三种，分别是全局变量和局部变量和一个 `buffer-local` 变量。全局变量通常使用 `defvar` 来定义，局部变量常用的是
+`let` 和 `let*` 来绑定， `let*` 与 `let` 的区别是绑定的变量，即可使用。 `setq` 用来改变变量的值（注意， `setq` 改变的最里层的值，不会影响最外层变量的值）。
+
+```emacs-lisp
+(defvar a 1)                      ; => a
+(setq a 2)
+(progn
+  (let ((a 1))
+    (message "%s" a))             ; => 1
+  (let* ((a 3)
+         (b a))
+    (message "a: %s b: %s" a b))  ;=> "a: 3 b: 3"
+  (message "%s" a))               ; => 2
+```
+
+声明一个 `buffer-local` 的变量可以用 `make-variable-buffer-local` 或用 `make-local-variable` 。这两个函数的区别在于前者是相当于在所有变量中都产生一个 `buffer-local` 的变量。而后者只在声明时所在的缓冲区内产生一个局部变量。
+
+```emacs-lisp
+(setq foo "I'm global variable!")       ; => "I'm global variable!"
+(make-local-variable 'foo)              ; => foo
+foo                                     ; => "I'm global variable!"
+(setq foo "I'm buffer-local variable!") ; => "I'm buffer-local variable!"
+foo                                     ; => "I'm buffer-local variable!"
+(with-current-buffer "*Messages*" foo)  ; => "I'm global variable!"
+```
+
+用 `make-local-variable` 声明为 `buffer-local` 变量时，这个变量的值还是全局变量的值。这时候全局的值也称为缺省值。你可以用
+`default-value` 来访问这个符号的全局变量的值。
+
+```emacs-lisp
+(default-value 'foo)                    ; => "I'm global variable!"
+```
+
+如果一个变量是 `buffer-local` ，那么在这个缓冲区内使用用 `setq` 就只能用改变当前缓冲区里这个变量的值。 `setq-default` 可以修改符号作为全局变量的值。测试一个变量是不是 `buffer-local` 可以用 `local-variable-p` 。
+
+```emacs-lisp
+(setq-default foo "modify global variable.")      ; => "modify global variable."
+(local-variable-p 'foo)                           ; => t
+(local-variable-p 'foo (get-buffer "*Messages*")) ; => nil
+```
+
+测试一个变量是否绑定值，或是否定义，可以使用 `boundp` 。对于一个 `buffer-local` 变量，它的缺省值可能是没有定义的，可以用
+`default-boundp` 先进行测试。使一个变量的值重新为空，可以用 `makunbound` 。要取消一个 `buffer-local` 变量用函数
+`kill-local-variable` 。可以用 `kill-all-local-variables` 取消所有的 `buffer-local` 变量。但是有属性 `permanent-local` 的不会消除，带有这些标记的变量一般都是和缓冲区模式无关的。
+
+```emacs-lisp
+(boundp 'foo)                           ; => t
+(default-boundp 'foo)                   ; => t
+(makunbound 'foo)                       ; => foo
+foo                                     ; This will signal an error
+(default-boundp 'foo)                   ; => t
+(kill-local-variable 'foo)              ; => foo
+```
+
+
+## 顺序执行 {#顺序执行}
+
+按表达式顺序依次执行的。在 `defun` 等特殊环境中是自动进行的。由于无法使用 `eval-last-sexp` 同时执行两个以上的表达式，在 `if` 表达式中的条件为真时执行的部分也只能运行一个表达式。这时就需要用 `progn` 这个特殊表达式。定义如下：
+
+```emacs-lisp
+(progn A B C ...)
+```
+
+使用例子：
+
+```emacs-lisp
+(progn
+      (message "a")
+      (message "b")
+      (message "c"))
+```
+
+
+## 条件语句 {#条件语句}
+
+条件判断表达式 `if` 和 `cond` 。还有两个宏 `when` 和 `unless` ，使用这两个宏的好处是使代码可读性提高， `when` 能省去 `if` 里的 `progn`
+结构， `unless` 省去条件为真子句需要的的 `nil` 表达式。定义形式分别如下：
+
+```emacs-lisp
+(if condition
+    then
+  else)
+
+(cond (case1 do-when-case1)
+      (case2 do-when-case2)
+      ...
+      (t do-when-none-meet))
+```
+
+使用例子：
+
+```emacs-lisp
+(progn
+  (setq a 2)
+  (if (= a 1)
+      (message "eq 1")
+    (message "%s" a)))
+
+(progn
+  (setq a 1)
+  (cond ((= a 1)
+         (message "1"))
+        ((> a 2)
+         (message "> 2"))
+        (message "default")))
+
+(progn
+  (setq a 3)
+  (when (= a 3)
+     (message "%s" a)))
+
+(progn
+  (setq a 1)
+  (unless (= a 2)
+     (message "%s" a)))
+```
+
+
+## 循环迭代 {#循环迭代}
+
+循环迭代使用的是 `while` 表达式。它的形式是：
+
+```emacs-lisp
+(while condition
+  body)
+```
+
+例如:
+
+```emacs-lisp
+
+(let ((m 1)
+      (n 10))
+  (while (> n 1)
+    (setq m (* m n)
+          n (- n 1)))
+  m)                         ; => 3628800
+```
+
+在函数式编程过程中，常用的是递归。
+
+
+## 逻辑运算 {#逻辑运算}
+
+条件的逻辑运算和其它语言都是很类似的，使用 `and` 、 `or` 、 `not` 。
+
+```emacs-lisp
+(let ((name "Tom"))
+  (or (equal name "World") (equal name "Tom"))
+  (message "Hello, %s" name))
+
+(let ((n 25))
+  (and (>= n 0)
+       (= (/ n (sqrt n)) (sqrt n))))           ; => t
+```
+
+
+## 函数、命令与lambda表达式 {#函数-命令与lambda表达式}
+
+`elisp` 中的函数和类函数对象：
+
+-   `lambda` 表达式
+
+    用 `Lisp` 编写的函数（严格意义上的函数对象）。
+-   `primitive` （内建函数）
+
+    一种可以从 `Lisp` 中调用但实际上是用 `C` 语言编写的函数。原语也称为内建函数或 `subr` 。通常，函数作为原语实现是因为它是 `Lisp`
+    的基本部分（例如 `car` ），或者因为它提供了操作系统服务的低级接口，或者因为它需要快速运行。与 `Lisp` 中定义的函数不同，原语只能通过更改C源代码和重新编译 `Emacs` 来修改或添加。
+-   `special form` （特殊形式）
+
+    一种类似于函数的原语，但不以通常的方式计算其所有参数。它可能只计算一些参数，也可能以不寻常的顺序或多次计算它们。示例包括 `if` 、 `and` 和 `while` 。见特殊表格。
+-   `macro` （宏）
+
+    在 `Lisp` 语言中定义的一种结构，它与函数的不同之处在于它把一个 `Lisp` 表达式转换成另一个要计算的表达式，而不是原来的表达式。元编程的实现基本上都是通过宏实现的，能通过宏定义实现各种高阶函数。
+-   `command` (命令)
+
+    一种可以通过命令执行原语调用的对象，通常是由于用户键入了一个绑定到该命令的键序列。
+-   `closure` 闭包
+
+    与 `lambda` 表达式非常相似的函数对象，只是它还包含词法变量绑定的环境。
+
+定义函数使用 `defun` 关键字，函数参数把必须提供的参数写在前面， `&optional` 可选的参数写在后面，最后用 `&rest` 一个符号表示剩余的所有参数。函数参数语法形式：
+
+```emacs-lisp
+(REQUIRED-VARS...
+ [&optional OPTIONAL-VARS...]
+ [&rest REST-VAR])
+```
+
+定义函数：
+
+```emacs-lisp
+(defun foo (var1 var2 &optional opt1 opt2 &rest rest)
+  (list var1 var2 opt1 opt2 rest))
+
+(foo 1 2)                               ; => (1 2 nil nil nil)
+(foo 1 2 3)                             ; => (1 2 3 nil nil)
+(foo 1 2 3 4 5 6)                       ; => (1 2 3 4 (5 6))
+```
+
+文档字符串，通常用于介绍函数功能。调用函数，运行时根据状态调用函数，可以用 `funcall` 和 `apply` 两个函数。
+
+```emacs-lisp
+(funcall 'list 'x '(y) '(z))               ; => (x (y) (z))
+(apply 'list 'x '(y) '(z))                ; => (x (y) z)
+```
+
+`elisp` 编写的命令都含有一个 `interactive` 表达式，它有一个字符串的可选参数。如果需要用户输入，即需要指定可选参数。字符串的第一个字符（也称为代码字符）代表参数的类型。例如：
+
+```emacs-lisp
+(defun hello-world (name)
+  (interactive "sSay:  ")
+  (message "Hello, %s" name))
+```
+
+通过 `M-x` 输入 `hello-world` 调用命令，会提示 `Say:`  输入 `Tom` 即提示 `Hello, Tom` 。
+
+`interactive` 可以使用的代码字符
+
+| 代码字符 | 代替的表达式                                                                           |
+|------|----------------------------------------------------------------------------------|
+| a    | (completing-read prompt obarray 'fboundp t)                                            |
+| b    | (read-buffer prompt nil t)                                                             |
+| B    | (read-buffer prompt)                                                                   |
+| c    | (read-char prompt)                                                                     |
+| C    | (read-command prompt)                                                                  |
+| d    | (point)                                                                                |
+| D    | (read-directory-name prompt)                                                           |
+| e    | (read-event)                                                                           |
+| f    | (read-file-name prompt nil nil t)                                                      |
+| F    | (read-file-name prompt)                                                                |
+| k    | (read-key-sequence prompt)                                                             |
+| K    | (read-key-sequence prompt nil t)                                                       |
+| m    | (mark)                                                                                 |
+| n    | (read-number prompt)                                                                   |
+| N    | (if current-prefix-arg (prefix-numeric-value current-prefix-arg) (read-number prompt)) |
+| p    | (prefix-numeric-value current-prefix-arg)                                              |
+| P    | current-prefix-arg                                                                     |
+| r    | (region-beginning) (region-end)                                                        |
+| s    | (read-string prompt)                                                                   |
+| S    | (completing-read prompt obarray nil t)                                                 |
+| v    | (read-variable prompt)                                                                 |
+| x    | (read-from-minibuffer prompt nil nil t)                                                |
+| X    | (eval (read-from-minibuffer prompt nil nil t))                                         |
+| z    | (read-coding-system prompt)                                                            |
+| Z    | (and current-prefix-arg (read-coding-system prompt))                                   |
+|      |                                                                                        |
+
+函数与 `lambda` 表达式是等价的，它只是没有一个具体的名字，定义形式与参数和函数相同。 `lambda` 表达式定义如下:
+
+```emacs-lisp
+(lambda (arg-variables…)
+  [documentation-string]
+  [interactive-declaration]
+  body-forms…)
+```
+
+调用 `lambda` 使用 `funcall` :
+
+```emacs-lisp
+(funcall (lambda (x) (* x x)) 2)                     ; => 4
+(let ((foo (lambda (a)
+            (message "hello %s" a))))
+  (funcall foo "tom"))
+```
+
+宏定义使用的是 `defmacro` 。可以使用 `macroexpand` 进行宏展开。例如：
+
+```emacs-lisp
+(defmacro foo (arg)
+  (list 'message "%d %d" arg arg))
+(macroexpand '(foo 1)) ; => (message "%d %d" 1 1)
+```
+
+以上都可以使用 `functionp` 测试一个符号是函数对象。
+
+
+## 装饰函数 {#装饰函数}
+
+[^fn:1]: _C_ 代表 **Ctrl** 键， _S_ 代表 **Shift** 键，@符号。
+[^fn:2]: _M_ 代表 **Meta** ，可以按 _Esc_ 或者 **Alt** 键盘。
