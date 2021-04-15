@@ -1,7 +1,7 @@
 +++
 title = "基础知识 - 如何自定义编辑器"
 date = 2021-04-01
-lastmod = 2021-04-15T21:33:42+08:00
+lastmod = 2021-04-15T22:08:56+08:00
 tags = ["Emacs"]
 categories = ["Emacs"]
 draft = false
@@ -742,6 +742,38 @@ foo                                     ; This will signal an error
 
 
 ## 装饰函数 {#装饰函数}
+
+`Elisp` 提供一个 `advice` 系统，它类似与 `pyhton` 中的装饰器，用于在不修改原函数的情况下，对函数增加额外的功能，如修改函数参数与返回值。当然 `advice` 功能更强大。旧版本中使用 `defadvice` 来定义它，使用的过程需要使用 `ad-*` 开头的系列宏来配合工作（目前已经弃用了），新的程序基本上使用全新的 `advice-add` 来添加，也可以使用 `define-advice` 定义一个 `advice` 。例如添加：
+
+```emacs-lisp
+(defun my-double (x)
+  (* x 2))
+(defun my-increase (x)
+  (+ x 1))
+(advice-add 'my-double :filter-return #'my-increase)
+(my-double 3)                                           ;=> 7
+```
+
+`advice` 系统提供了两组原语：一组是核心原语，用于保存在变量和对象字段中的函数值（对应的原语是 `add function` 和 `remove
+function` ），另一组是分层的，用于命名函数（主要原语是 `advice add` 和 `advice remove` ）。例如移除：
+
+```emacs-lisp
+(advice-remove 'my-double #'my-increase)
+```
+
+使用 `define-advice` 定义一个 `advice` 。不过 `define-advice` 定义时的命名给人感觉很奇怪，常见还是直接使用 `advice-add` 。 如：
+
+```emacs-lisp
+(defun myfunc (a b c)
+  (list a b c c))
+
+(defun myadvice@myfunc (&rest _)
+  (print "effect"))
+
+(advice-add 'myfunc :before 'myadvice@myfunc)
+
+(myfunc 1 2 3)
+```
 
 [^fn:1]: _C_ 代表 **Ctrl** 键， _S_ 代表 **Shift** 键，@符号。
 [^fn:2]: _M_ 代表 **Meta** ，可以按 _Esc_ 或者 **Alt** 键盘。

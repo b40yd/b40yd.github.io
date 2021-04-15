@@ -642,12 +642,42 @@ foo                                     ; This will signal an error
 #+end_src
 宏定义使用的是 ~defmacro~ 。可以使用 ~macroexpand~ 进行宏展开。例如：
 #+begin_src emacs-lisp :tangle yes
-(defmacro foo (arg)
-  (list 'message "%d %d" arg arg))
-(macroexpand '(foo 1)) ; => (message "%d %d" 1 1)
+  (defmacro foo (arg)
+    (list 'message "%d %d" arg arg))
+  (macroexpand '(foo 1)) ; => (message "%d %d" 1 1)
 #+end_src
 以上都可以使用 ~functionp~ 测试一个符号是函数对象。
 * 装饰函数
+~Elisp~ 提供一个 ~advice~ 系统，它类似与 ~pyhton~ 中的装饰器，用于在不修改原函数的情况下，对函数增加额外的功能，如修改函数参数
+与返回值。当然 ~advice~ 功能更强大。旧版本中使用 ~defadvice~ 来定义它，使用的过程需要使用 ~ad-*~ 开头的系列宏来配合工作（目前
+已经弃用了），新的程序基本上使用全新的 ~advice-add~ 来添加，也可以使用 ~define-advice~ 定义一个 ~advice~ 。例如添加：
+#+begin_src emacs-lisp :tangle yes
+  (defun my-double (x)
+    (* x 2))
+  (defun my-increase (x)
+    (+ x 1))
+  (advice-add 'my-double :filter-return #'my-increase)
+  (my-double 3)                                           ;=> 7
+#+end_src
+~advice~ 系统提供了两组原语：一组是核心原语，用于保存在变量和对象字段中的函数值（对应的原语是 ~add function~ 和 ~remove
+function~ ），另一组是分层的，用于命名函数（主要原语是 ~advice add~ 和 ~advice remove~ ）。
+例如移除：
+#+begin_src emacs-lisp :tangle yes
+  (advice-remove 'my-double #'my-increase)
+#+end_src
+
+使用 ~define-advice~ 定义一个 ~advice~ 。不过 ~define-advice~ 定义时的命名给人感觉很奇怪，常见还是直接使用 ~advice-add~ 。 如：
+#+begin_src emacs-lisp :tangle yes
+  (defun myfunc (a b c)
+    (list a b c c))
+
+  (defun myadvice@myfunc (&rest _)
+    (print "effect"))
+
+  (advice-add 'myfunc :before 'myadvice@myfunc)
+
+  (myfunc 1 2 3)
+#+end_src
 
 [fn:1] /C/ 代表 *Ctrl* 键， /S/ 代表 *Shift* 键，@符号。
 [fn:2] /M/ 代表 *Meta* ，可以按 /Esc/ 或者 *Alt* 键盘。
