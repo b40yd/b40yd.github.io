@@ -1,9 +1,9 @@
 +++
 title = "依赖包管理 - 如何自定义编辑器"
 date = 2021-04-16
-lastmod = 2021-04-17T01:40:17+08:00
-tags = ["Emacs", "编辑器"]
-categories = ["Emacs", "编辑器"]
+lastmod = 2021-04-17T01:44:37+08:00
+tags = ["Emacs", "编辑器", "package"]
+categories = ["Emacs", "编辑器", "package"]
 draft = false
 author = "7ym0n"
 +++

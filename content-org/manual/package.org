@@ -5,8 +5,8 @@
 #+HUGO_BASE_DIR: ../../
 #+HUGO_SECTION: post/manual
 #+HUGO_AUTO_SET_LASTMOD: t
-#+HUGO_TAGS: Emacs 编辑器
-#+HUGO_CATEGORIES: Emacs 编辑器
+#+HUGO_TAGS: Emacs 编辑器 package
+#+HUGO_CATEGORIES: Emacs 编辑器 package
 #+HUGO_DRAFT: false
 #+HUGO_TOC: true
 * 设置软件仓库源
