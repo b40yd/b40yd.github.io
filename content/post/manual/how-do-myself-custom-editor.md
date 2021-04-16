@@ -1,7 +1,7 @@
 +++
 title = "如何自定义编辑器"
 date = 2021-04-01
-lastmod = 2021-04-02T09:58:32+08:00
+lastmod = 2021-04-16T18:07:16+08:00
 tags = ["Emacs"]
 categories = ["Emacs"]
 draft = false
@@ -12,7 +12,7 @@ author = "7ym0n"
 
 -   [简介](/post/manual/introduction/)
 -   [基础知识](/post/manual/basic)
--   基本配置
+-   [基本配置](/post/manual/basic-config/)
 -   设置代理
 -   依赖包管理
 -   快速编辑

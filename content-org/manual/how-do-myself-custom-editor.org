@@ -13,7 +13,7 @@
 * 目录索引
 - [[/post/manual/introduction/][简介]]
 - [[/post/manual/basic][基础知识]]
-- 基本配置
+- [[/post/manual/basic-config/][基本配置]]
 - 设置代理
 - 依赖包管理
 - 快速编辑
