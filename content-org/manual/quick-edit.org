@@ -1,0 +1,17 @@
+#+TITLE: 编辑技巧 - 如何自定义编辑器
+#+AUTHOR:
+#+DATE: 2021-04-16
+#+HUGO_CUSTOM_FRONT_MATTER: :author "7ym0n"
+#+HUGO_BASE_DIR: ../../
+#+HUGO_SECTION: post/manual
+#+HUGO_AUTO_SET_LASTMOD: t
+#+HUGO_TAGS:
+#+HUGO_CATEGORIES:
+#+HUGO_DRAFT: false
+#+HUGO_TOC: true
+* 提高编辑效率
+使用一些技巧，在编辑文本的过程中，更有效率，比如快速替换，快速选择，多行编辑等。
+*** iedit
+同时编辑相同的地方。在做代码重构的过程中经常使用的技巧，原来需要多次编辑的地方，可以一次编辑完成。
+*** selected
+对选择的区域进行快速编辑，常见的就是修大小写，注释选择的区域等。

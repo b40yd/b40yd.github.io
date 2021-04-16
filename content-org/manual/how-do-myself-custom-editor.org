@@ -10,13 +10,21 @@
 #+HUGO_DRAFT: false
 #+HUGO_TOC: true
 
+* 说明
+本系列文章是按顺序编写的，有时候会根据遗漏补充改变目录顺序。另外，所有文章都会根据错误进行及时堪误，会存在前一天和未来很
+大的变化（还有就是可能想到哪里遗漏了，就会进行补充）。
+
+另外，看到一些文章可能只是草草两句话就完了（包括已完成文章，后面会根据内容进行配动图），别着急，还没来得及更新呢，正在编
+辑中....
+
 * 目录索引
 - [[/post/manual/introduction/][简介]]
+- [[/post/manual/basic-usage/][基础使用]]
 - [[/post/manual/basic][基础知识]]
 - [[/post/manual/basic-config/][基本配置]]
-- 设置代理
-- 依赖包管理
-- 快速编辑
+- [[/post/manual/proxy/][设置代理]]
+- [[/post/manual/package/][依赖包管理]]
+- [[/post/manual/quick-edit][快速编辑]]
 - Buffer
 - Window
 - 高亮设置
