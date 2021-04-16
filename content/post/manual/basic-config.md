@@ -1,7 +1,7 @@
 +++
 title = "基础配置 - 如何自定义编辑器"
 date = 2021-04-16
-lastmod = 2021-04-16T18:06:46+08:00
+lastmod = 2021-04-16T18:13:10+08:00
 tags = ["Emacs", "编辑器"]
 categories = ["Emacs", "编辑器"]
 draft = false
