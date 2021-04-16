@@ -1,7 +1,9 @@
 +++
 title = "编辑技巧 - 如何自定义编辑器"
 date = 2021-04-16
-lastmod = 2021-04-16T22:55:40+08:00
+lastmod = 2021-04-17T01:40:34+08:00
+tags = ["Emacs", "编辑器"]
+categories = ["Emacs", "编辑器"]
 draft = false
 author = "7ym0n"
 +++
@@ -11,11 +13,11 @@ author = "7ym0n"
 使用一些技巧，在编辑文本的过程中，更有效率，比如快速替换，快速选择，多行编辑等。
 
 
-### iedit {#iedit}
+### iedit-mode {#iedit-mode}
 
 同时编辑相同的地方。在做代码重构的过程中经常使用的技巧，原来需要多次编辑的地方，可以一次编辑完成。
 
 
-### selected {#selected}
+### selected-mode {#selected-mode}
 
 对选择的区域进行快速编辑，常见的就是修大小写，注释选择的区域等。

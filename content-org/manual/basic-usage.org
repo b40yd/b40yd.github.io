@@ -5,8 +5,8 @@
 #+HUGO_BASE_DIR: ../../
 #+HUGO_SECTION: post/manual
 #+HUGO_AUTO_SET_LASTMOD: t
-#+HUGO_TAGS:
-#+HUGO_CATEGORIES:
+#+HUGO_TAGS: Emacs 编辑器
+#+HUGO_CATEGORIES: Emacs 编辑器
 #+HUGO_DRAFT: false
 #+HUGO_TOC: true
 
