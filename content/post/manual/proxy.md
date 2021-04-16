@@ -1,9 +1,9 @@
 +++
 title = "设置代理 - 如何自定义编辑器"
 date = 2021-04-16
-lastmod = 2021-04-17T01:39:51+08:00
-tags = ["Emacs", "编辑器"]
-categories = ["Emacs", "编辑器"]
+lastmod = 2021-04-17T01:52:18+08:00
+tags = ["Emacs", "编辑器", "Proxy"]
+categories = ["Emacs", "编辑器", "Proxy"]
 draft = false
 author = "7ym0n"
 +++
