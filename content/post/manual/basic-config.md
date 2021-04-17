@@ -1,7 +1,7 @@
 +++
 title = "基础配置 - 如何自定义编辑器"
 date = 2021-04-16
-lastmod = 2021-04-16T18:13:10+08:00
+lastmod = 2021-04-17T21:51:09+08:00
 tags = ["Emacs", "编辑器"]
 categories = ["Emacs", "编辑器"]
 draft = false
@@ -56,3 +56,29 @@ author = "7ym0n"
 (advice-add #'package-initialize :after #'custom-config-load-path)
 (custom-config-load-path)
 ```
+
+
+## 特殊配置文件 {#特殊配置文件}
+
+有一个常用的特殊配置文件 `.dir-locals.el`&nbsp;[^fn:1] 主要配置工作目录的一些环境变量或者默认执行某些命令。该配置文件一般在项目或者工作目录的根下，当在执行保存操作时默认会加载该配置文件。该配置是一个 `Association Lists` (关联列表)。如果指定 `major mode`
+将会在该 `mode` 下工作，可以通过配置 `nil` 在任意工作模式下都执行指定的行为。同时也可以通过指定一个子目录，在这个子目录下，指定的 `mode` 都会应用所有文件。例如：
+
+```emacs-lisp
+((nil . ((indent-tabs-mode . t)
+         (fill-column . 80)
+         (mode . auto-fill)))
+ (c-mode . ((c-file-style . "BSD")
+            (subdirs . nil)))
+ ("src/imported"
+  . ((nil . ((change-log-default-name
+              . "ChangeLog.local"))))))
+```
+
+不过通常一般用于编译相关的设置。例如，我在使用 `org-mode` 编写该系列文章时，通常需要转换成 `hugo` 支持的 `markdown` 文件，我可以通过该配置文件，自动的在我编写文章保存时自动导出，这样我就可以直接预览文章（暂时不用特别在意，后续介绍 `org-mode` 会详细介绍）。配置信息如下：
+
+```emacs-lisp
+(("content-org/"
+  . ((org-mode . ((eval . (org-hugo-auto-export-mode)))))))
+```
+
+[^fn:1]: <https://www.gnu.org/software/emacs/manual/html%5Fnode/emacs/Directory-Variables.html>

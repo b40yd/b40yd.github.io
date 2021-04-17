@@ -1,7 +1,7 @@
 +++
 title = "设置代理 - 如何自定义编辑器"
 date = 2021-04-16
-lastmod = 2021-04-17T01:52:18+08:00
+lastmod = 2021-04-17T20:58:49+08:00
 tags = ["Emacs", "编辑器", "Proxy"]
 categories = ["Emacs", "编辑器", "Proxy"]
 draft = false
@@ -129,6 +129,8 @@ Shell环境中可以设置 `https_proxy` 和 `http_proxy` 变量，这样用命�
 ```
 
 可以通过 `M-x` 输入执行 `eval-buffer` 运行当前 `buffer` 。再次执行 `M-x` 输入实现的这些命令即可，例如输入 `proxy-http-toggle` 就会在 `minibuffer` 显示当前代理服务的信息。
+
+{{< figure src="/manual/proxy-settings.png" >}}
 
 为了让 `Emacs` 启动自动加载以上配置，需要在 `init.el` 中去加载当前文件。如，在 `init.el` 文件末尾加入以下代码：
 
