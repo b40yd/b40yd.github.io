@@ -1,7 +1,7 @@
 +++
 title = "依赖包管理 - 如何自定义编辑器"
 date = 2021-04-16
-lastmod = 2021-04-17T23:41:05+08:00
+lastmod = 2021-04-17T23:50:38+08:00
 tags = ["Emacs", "编辑器", "package"]
 categories = ["Emacs", "编辑器", "package"]
 draft = false
@@ -23,7 +23,7 @@ author = "7ym0n"
 
 ## 基础使用 {#基础使用}
 
-`Emacs` 默认使用 `package-list` 浏览官方的仓库列表，可使用的包比较少，主要是因为 `LICENSE` 不是 `GPL` 自由软件授权。
+`Emacs` 默认使用 `list-packages` 浏览官方的仓库列表，可使用的包比较少，主要是因为 `LICENSE` 不是 `GPL` 自由软件授权，都不会加入该仓库。
 
 {{< figure src="/manual/package-default-manage.png" >}}
 

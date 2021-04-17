@@ -18,7 +18,7 @@
 - 解决多源管理问题
 - 解决包升级时下载阻塞问题
 * 基础使用
-~Emacs~ 默认使用 ~package-list~ 浏览官方的仓库列表，可使用的包比较少，主要是因为 ~LICENSE~ 不是 ~GPL~ 自由软件授权。
+~Emacs~ 默认使用 ~list-packages~ 浏览官方的仓库列表，可使用的包比较少，主要是因为 ~LICENSE~ 不是 ~GPL~ 自由软件授权，都不会加入该仓库。
 
 [[file:../../static/manual/package-default-manage.png]]
 
