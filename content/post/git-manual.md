@@ -1,0 +1,873 @@
++++
+title = "Git 命令介绍"
+date = 2021-04-18
+lastmod = 2021-04-18T16:00:36+08:00
+tags = ["Git"]
+categories = ["Git"]
+draft = false
+author = "7ym0n"
++++
+
+## Git使用介绍 {#git使用介绍}
+
+
+### 常用命令清单 {#常用命令清单}
+
+Git 命令专用名词的译名
+
+-   Workspace：工作区
+-   Index / Stage：暂存区
+-   Repository：仓库区（或本地仓库）
+-   Remote：远程仓库
+
+
+### 新建代码库 {#新建代码库}
+
+```shell
+# 在当前目录新建一个Git代码库
+$ git init
+
+# 新建一个目录，将其初始化为Git代码库
+$ git init [project-name]
+
+# 下载一个项目和它的整个代码历史
+$ git clone [url]
+```
+
+
+### 配置 {#配置}
+
+Git的设置文件为.gitconfig，它可以在用户主目录下（全局配置），也可以在项目目录下（项目配置）。
+
+```shell
+# 显示当前的Git配置
+$ git config --list
+
+# 编辑Git配置文件
+$ git config -e [--global]
+
+# 设置提交代码时的用户信息
+$ git config --global user.name "[name]"
+$ git config --global user.email "[email address]"
+```
+
+
+### 增加/删除文件 {#增加-删除文件}
+
+```shell
+# 添加指定文件到暂存区
+$ git add [file1] [file2] ...
+
+# 添加指定目录到暂存区，包括子目录
+$ git add [dir]
+
+# 添加当前目录的所有文件到暂存区
+$ git add .
+
+# 添加每个变化前，都会要求确认
+# 对于同一个文件的多处变化，可以实现分次提交
+$ git add -p
+
+# 删除工作区文件，并且将这次删除放入暂存区
+$ git rm [file1] [file2] ...
+
+# 停止追踪指定文件，但该文件会保留在工作区
+$ git rm --cached [file]
+
+# 改名文件，并且将这个改名放入暂存区
+$ git mv [file-original] [file-renamed]
+```
+
+
+### 代码提交 {#代码提交}
+
+```shell
+# 提交暂存区到仓库区
+$ git commit -m [message]
+
+# 提交暂存区的指定文件到仓库区
+$ git commit [file1] [file2] ... -m [message]
+
+# 提交工作区自上次commit之后的变化，直接到仓库区
+$ git commit -a
+
+# 提交时显示所有diff信息
+$ git commit -v
+
+# 使用一次新的commit，替代上一次提交
+# 如果代码没有任何新变化，则用来改写上一次commit的提交信息
+$ git commit --amend -m [message]
+
+# 重做上一次commit，并包括指定文件的新变化
+$ git commit --amend [file1] [file2] ...
+```
+
+
+### 分支 {#分支}
+
+```shell
+# 列出所有本地分支
+$ git branch
+
+# 列出所有远程分支
+$ git branch -r
+
+# 列出所有本地分支和远程分支
+$ git branch -a
+
+# 新建一个分支，但依然停留在当前分支
+$ git branch [branch-name]
+
+# 新建一个分支，并切换到该分支
+$ git checkout -b [branch]
+
+# 在git 2.23版本过后分支管理使用git switch
+# 新建一个分支 并且换到该分支
+$ git switch -c [branch]
+
+# 新建一个分支，并切换到该分支，如果该分支存在将强制覆盖旧分支
+$ git switch -C [branch]
+
+# 新建一个分支，指向指定commit
+$ git branch [branch] [commit]
+
+# 新建一个分支，与指定的远程分支建立追踪关系
+$ git branch --track [branch] [remote-branch]
+
+# 切换到指定分支，并更新工作区
+$ git checkout [branch-name]
+
+# 切换到上一个分支
+$ git checkout -
+
+# 建立追踪关系，在现有分支与指定的远程分支之间
+$ git branch --set-upstream [branch] [remote-branch]
+
+# 合并指定分支到当前分支
+$ git merge [branch]
+
+# 选择一个commit，合并进当前分支
+$ git cherry-pick [commit]
+
+# 删除分支
+$ git branch -d [branch-name]
+
+# 强制删除分支
+$ git branch -D [branch-name]
+
+# 删除远程分支
+$ git push origin --delete [branch-name]
+$ git branch -dr [remote/branch]
+```
+
+
+### 标签 {#标签}
+
+```shell
+# 列出所有tag
+$ git tag
+
+# 新建一个tag在当前commit
+$ git tag [tag]
+
+# 新建一个tag在指定commit
+$ git tag [tag] [commit]
+
+# 删除本地tag
+$ git tag -d [tag]
+
+# 删除远程tag
+$ git push origin :refs/tags/[tagName]
+
+# 查看tag信息
+$ git show [tag]
+
+# 提交指定tag
+$ git push [remote] [tag]
+
+# 提交所有tag
+$ git push [remote] --tags
+
+# 新建一个分支，指向某个tag
+$ git checkout -b [branch] [tag]
+```
+
+
+### 查看信息 {#查看信息}
+
+```shell
+# 显示有变更的文件
+$ git status
+
+# 显示当前分支的版本历史
+$ git log
+
+# 显示commit历史，以及每次commit发生变更的文件
+$ git log --stat
+
+# 搜索提交历史，根据关键词
+$ git log -S [keyword]
+
+# 显示某个commit之后的所有变动，每个commit占据一行
+$ git log [tag] HEAD --pretty=format:%s
+
+# 显示某个commit之后的所有变动，其"提交说明"必须符合搜索条件
+$ git log [tag] HEAD --grep feature
+
+# 显示某个文件的版本历史，包括文件改名
+$ git log --follow [file]
+$ git whatchanged [file]
+
+# 显示指定文件相关的每一次diff
+$ git log -p [file]
+
+# 显示过去5次提交
+$ git log -5 --pretty --oneline
+
+# 显示所有提交过的用户，按提交次数排序
+$ git shortlog -sn
+
+# 显示指定文件是什么人在什么时间修改过
+$ git blame [file]
+
+# 显示暂存区和工作区的差异
+$ git diff
+
+# 显示暂存区和上一个commit的差异
+$ git diff --cached [file]
+
+# 显示工作区与当前分支最新commit之间的差异
+$ git diff HEAD
+
+# 显示两次提交之间的差异
+$ git diff [first-branch]...[second-branch]
+
+# 显示今天你写了多少行代码
+$ git diff --shortstat "@{0 day ago}"
+
+# 显示某次提交的元数据和内容变化
+$ git show [commit]
+
+# 显示某次提交发生变化的文件
+$ git show --name-only [commit]
+
+# 显示某次提交时，某个文件的内容
+$ git show [commit]:[filename]
+
+# 显示当前分支的最近几次提交
+$ git reflog
+```
+
+
+### 远程同步 {#远程同步}
+
+```shell
+# 下载远程仓库的所有变动
+$ git fetch [remote]
+
+# 显示所有远程仓库
+$ git remote -v
+
+# 显示某个远程仓库的信息
+$ git remote show [remote]
+
+# 增加一个新的远程仓库，并命名
+$ git remote add [shortname] [url]
+
+# 取回远程仓库的变化，并与本地分支合并
+$ git pull [remote] [branch]
+
+# 上传本地指定分支到远程仓库
+$ git push [remote] [branch]
+
+# 强行推送当前分支到远程仓库，即使有冲突
+$ git push [remote] --force
+
+# 推送所有分支到远程仓库
+$ git push [remote] --all
+```
+
+
+### 撤销 {#撤销}
+
+```shell
+# 恢复暂存区的指定文件到工作区
+$ git checkout [file]
+
+# 恢复某个commit的指定文件到暂存区和工作区
+$ git checkout [commit] [file]
+
+# 恢复暂存区的所有文件到工作区
+$ git checkout .
+
+# 重置暂存区的指定文件，与上一次commit保持一致，但工作区不变
+$ git reset [file]
+
+# 重置暂存区与工作区，与上一次commit保持一致
+$ git reset --hard
+
+# 重置当前分支的指针为指定commit，同时重置暂存区，但工作区不变
+$ git reset [commit]
+
+# 重置当前分支的HEAD为指定commit，同时重置暂存区和工作区，与指定commit一致
+$ git reset --hard [commit]
+
+# 重置当前HEAD为指定commit，但保持暂存区和工作区不变
+$ git reset --keep [commit]
+
+# 新建一个commit，用来撤销指定commit
+# 后者的所有变化都将被前者抵消，并且应用到当前分支
+$ git revert [commit]
+
+# 暂时将未提交的变化移除，稍后再移入
+$ git stash
+$ git stash pop
+```
+
+
+### 其他 {#其他}
+
+```shell
+# 生成一个可供发布的压缩包
+$ git archive
+```
+
+
+### 远程仓库管理 {#远程仓库管理}
+
+
+### git clone {#git-clone}
+
+远程操作第一步，用于克隆一个远程仓库代码。例如：
+
+```shell
+# 克隆一份 Emacs 配置
+$ git clone git@gitlab.org/7ym0n/dotfairy.git
+```
+
+该命令会在本地主机生成一个目录，与远程主机的版本库同名。如果要指定不同的目录名，可以将目录名作为git clone命令的第二个参数。
+
+```shell
+$ git clone <版本库的网址> <本地目录名>
+```
+
+git clone支持多种协议，除了HTTP(s)以外，还支持SSH、Git、本地文件协议等，下面是一些例子。
+
+```shell
+$ git clone http[s]://example.com/path/to/repo.git/
+$ git clone ssh://example.com/path/to/repo.git/
+$ git clone git://example.com/path/to/repo.git/
+$ git clone /opt/git/project.git
+$ git clone file:///opt/git/project.git
+$ git clone ftp[s]://example.com/path/to/repo.git/
+$ git clone rsync://example.com/path/to/repo.git/
+```
+
+
+### git remote {#git-remote}
+
+为了便于管理，Git要求每个远程主机都必须指定一个主机名。git remote命令就用于管理主机名。
+
+不带选项的时候，git remote命令列出所有远程主机。
+
+```shell
+$ git remote
+origin
+```
+
+使用-v选项，可以参看远程主机的网址。
+
+```shell
+$ git remote -v
+origin	git@gitlab.com:7ym0n/dotfairy.git (fetch)
+origin	git@gitlab.com:7ym0n/dotfairy.git (push)
+```
+
+上面命令表示，当前只有一台远程主机，叫做origin，以及它的网址。
+
+克隆版本库的时候，所使用的远程主机自动被Git命名为origin。如果想用其他的主机名，需要用git clone命令的-o选项指定。
+
+```shell
+$ git clone -o my-dotfairy https://gitlab.org/7ym0n/dotfairy.git
+$ git remote
+my-dotfairy #表示，克隆的时候，指定远程主机叫做my-dotfairy
+```
+
+git remote show命令加上主机名，可以查看该主机的详细信息。
+
+```shell
+$ git remote show origin
+* remote origin
+  Fetch URL: git@gitlab.com:7ym0n/dotfairy.git
+  Push  URL: git@gitlab.com:7ym0n/dotfairy.git
+  HEAD branch: master
+  Remote branch:
+    master tracked
+  Local branch configured for 'git pull':
+    master merges with remote master
+  Local ref configured for 'git push':
+    master pushes to master (up to date)
+```
+
+git remote add命令用于添加远程主机。
+
+```shell
+$ git remote add <主机名> <仓库地址>
+```
+
+git remote rm命令用于删除远程主机。
+
+```shell
+$ git remote rm <主机名>
+```
+
+git remote rename命令用于远程主机的改名。
+
+```shell
+$ git remote rename <原主机名> <新主机名>
+```
+
+
+### git fetch {#git-fetch}
+
+一旦远程主机的版本库有了更新（Git术语叫做commit），需要将这些更新取回本地，这时就要用到git fetch命令。
+
+```shell
+$ git fetch <远程主机名>
+```
+
+git fetch命令通常用来查看其他人的进程，因为它取回的代码对你本地的开发代码没有影响。
+
+默认情况下，git fetch取回所有分支（branch）的更新。如果只想取回特定分支的更新，可以指定分支名。
+
+```shell
+$ git fetch <远程主机名> <分支名>
+```
+
+比如，取回origin主机的master分支。
+
+```shell
+$ git fetch origin master
+```
+
+所取回的更新，在本地主机上要用"远程主机名/分支名"的形式读取。比如origin主机的master，就要用origin/master读取。
+
+git branch命令的-r选项，可以用来查看远程分支，-a选项查看所有分支。
+
+```shell
+$ git branch -r
+origin/master
+
+$ git branch -a
+* master
+  remotes/origin/master
+```
+
+取回远程主机的更新以后，可以在它的基础上，使用git checkout命令创建一个新的分支。
+
+```shell
+$ git checkout -b newBrach origin/master #表示，在origin/master的基础上，创建一个新分支
+```
+
+此外，也可以使用git merge命令或者git rebase命令，在本地分支上合并远程分支。
+
+```shell
+# 表示在当前分支上，合并origin/master
+$ git merge origin/master
+# 或者
+$ git rebase origin/master
+```
+
+
+### git pull {#git-pull}
+
+git pull命令的作用是，取回远程主机某个分支的更新，再与本地的指定分支合并。它的完整格式稍稍有点复杂。
+
+```shell
+$ git pull <远程主机名> <远程分支名>:<本地分支名>
+```
+
+比如，取回origin主机的develop分支，与本地的master分支合并，需要写成下面这样。
+
+```shell
+$ git pull origin develop:master
+```
+
+如果远程分支是与当前分支合并，则冒号后面的部分可以省略。
+
+```shell
+$ git pull origin develop
+#实质上，这等同于先做git fetch，再做git merge
+$ git fetch origin
+$ git merge origin/develop
+```
+
+在某些场合，Git会自动在本地分支与远程分支之间，建立一种追踪关系（tracking）。比如，在git clone的时候，所有本地分支默认与远程主机的同名分支，建立追踪关系，也就是说，本地的master分支自动"追踪"origin/master分支。
+
+Git也允许手动建立追踪关系。
+
+```shell
+git branch --set-upstream master origin/develop
+```
+
+如果当前分支与远程分支存在追踪关系，git pull就可以省略远程分支名。
+
+```shell
+$ git pull origin
+#如果当前分支只有一个追踪分支，连远程主机名都可以省略。
+$ git pull #当前分支自动与唯一一个追踪分支进行合并。
+```
+
+如果合并需要采用rebase模式，可以使用--rebase选项。
+
+```shell
+$ git pull --rebase <远程主机名> <远程分支名>:<本地分支名>
+```
+
+如果远程主机删除了某个分支，默认情况下，git pull 不会在拉取远程分支的时候，删除对应的本地分支。这是为了防止，由于其他人操作了远程主机，导致git pull不知不觉删除了本地分支。
+
+但是，你可以改变这个行为，加上参数 -p 就会在本地删除远程已经删除的分支。
+
+```shell
+$ git pull -p
+# 等同于下面的命令
+$ git fetch --prune origin
+$ git fetch -p
+```
+
+
+### git push {#git-push}
+
+git push命令用于将本地分支的更新，推送到远程主机。它的格式与git pull命令相仿。
+
+```shell
+$ git push <远程主机名> <本地分支名>:<远程分支名>
+```
+
+注意，分支推送顺序的写法是<来源地>:<目的地>，所以git pull是<远程分支>:<本地分支>，而git push是<本地分支>:<远程分支>。
+
+如果省略远程分支名，则表示将本地分支推送与之存在"追踪关系"的远程分支（通常两者同名），如果该远程分支不存在，则会被新建。
+
+```shell
+$ git push origin master #将本地的master分支推送到origin主机的master分支。如果后者不存在，则会被新建。
+```
+
+如果省略本地分支名，则表示删除指定的远程分支，因为这等同于推送一个空的本地分支到远程分支。
+
+```shell
+$ git push origin :master
+# 等同于
+$ git push origin --delete master
+```
+
+如果当前分支与远程分支之间存在追踪关系，则本地分支和远程分支都可以省略。
+
+```shell
+$ git push origin
+```
+
+如果当前分支只有一个追踪分支，那么主机名都可以省略。
+
+```shell
+$ git push
+```
+
+如果当前分支与多个主机存在追踪关系，则可以使用-u选项指定一个默认主机，这样后面就可以不加任何参数使用git push。
+
+```shell
+$ git push -u origin master
+```
+
+上面命令将本地的master分支推送到origin主机，同时指定origin为默认主机，后面就可以不加任何参数使用git push了。
+
+不带任何参数的git push，默认只推送当前分支，这叫做simple方式。此外，还有一种matching方式，会推送所有有对应的远程分支的本地分支。Git 2.0版本之前，默认采用matching方法，现在改为默认采用simple方式。如果要修改这个设置，可以采用git config命令。
+
+```shell
+$ git config --global push.default matching
+# 或者
+$ git config --global push.default simple
+```
+
+还有一种情况，就是不管是否存在对应的远程分支，将本地的所有分支都推送到远程主机，这时需要使用--all选项。
+
+```shell
+$ git push --all origin
+```
+
+如果远程主机的版本比本地版本更新，推送时Git会报错，要求先在本地做git pull合并差异，然后再推送到远程主机。这时，如果你一定要推送，可以使用--force选项。
+
+```shell
+$ git push --force origin #使用--force选项，结果导致远程主机上更新的版本被覆盖。除非你很确定要这样做，否则应该尽量避免使用--force选项
+```
+
+最后，git push不会推送标签（tag），除非使用--tags选项。
+
+```shell
+$ git push origin --tags
+```
+
+
+### git bisect {#git-bisect}
+
+git bisect是一个很有用的命令，用来查找哪一次代码提交引入了错误。它的原理很简单，就是将代码提交的历史，按照两分法不断缩小定位。所谓"两分法"，就是将代码历史一分为二，确定问题出在前半部分，还是后半部分，不断执行这个过程，直到范围缩小到某一次代码提交。
+git bisect start命令启动查错，它的格式如下。
+
+```shell
+$ git bisect start [终点] [起点]
+```
+
+例如：选择全部的代码历史。起点是第一次提交186356c，终点是最近一次的HEAD。当然，指定其他范围也可以。
+
+```shell
+$ git bisect start HEAD 186356c
+```
+
+确定正常工作。使用git bisect good命令，标识本次提交（第N次）没有问题。
+
+```shell
+$ git bisect good
+```
+
+确定不能正常工作。使用git bisect bad命令，标识本次提交（第N次）有问题。
+
+```shell
+$ git bisect bad
+```
+
+接下来，不断重复这个过程，直到成功找到出问题的那一次提交为止。这时，Git 会给出如下的提示。
+<commit id> is the first bad commit
+
+然后，使用git bisect reset命令，退出查错，回到最近一次的代码提交。
+
+```shell
+$ git bisect reset
+```
+
+
+### git cherry-pick {#git-cherry-pick}
+
+对于多分支的代码库，将代码从一个分支转移到另一个分支是常见需求。这时分两种情况。一种情况是，你需要另一个分支的所有代码变动，那么就采用合并（git merge）。另一种情况是，你只需要部分代码变动（某几个提交），这时可以采用 Cherry pick。
+git cherry-pick命令的作用，就是将指定的提交（commit）应用于其他分支。
+
+```shell
+$ git cherry-pick <commitHash> # 将指定的提交commitHash，应用于当前分支。这会在当前分支产生一个新的提交，当然它们的哈希值会不一样。
+```
+
+git cherry-pick命令的参数，不一定是提交的哈希值，分支名也是可以的，表示转移该分支的最新提交。
+
+```shell
+$ git cherry-pick feature
+```
+
+Cherry pick 支持一次转移多个提交。
+
+```shell
+$ git cherry-pick <HashA> <HashB> # 将 A 和 B 两个提交应用到当前分支。这会在当前分支生成两个对应的新提交。
+
+# 如果想要转移一系列的连续提交，可以使用下面的简便语法。
+$ git cherry-pick A..B # 它们必须按照正确的顺序放置：提交 A 必须早于提交 B，否则命令将失败，但不会报错。
+```
+
+注意，使用上面的命令，提交 A 将不会包含在 Cherry pick 中。如果要包含提交 A，可以使用下面的语法。
+
+```shell
+$ git cherry-pick A^..B
+```
+
+git cherry-pick命令的常用配置项如下。
+
+（1）-e，--edit
+
+打开外部编辑器，编辑提交信息。
+
+（2）-n，--no-commit
+
+只更新工作区和暂存区，不产生新的提交。
+
+（3）-x
+
+在提交信息的末尾追加一行(cherry picked from commit ...)，方便以后查到这个提交是如何产生的。
+
+（4）-s，--signoff
+
+在提交信息的末尾追加一行操作者的签名，表示是谁进行了这个操作。
+
+（5）-m parent-number，--mainline parent-number
+
+如果原始提交是一个合并节点，来自于两个分支的合并，那么 Cherry pick 默认将失败，因为它不知道应该采用哪个分支的代码变动。
+
+-m配置项告诉 Git，应该采用哪个分支的变动。它的参数parent-number是一个从1开始的整数，代表原始提交的父分支编号。
+
+```shell
+$ git cherry-pick -m 1 <commitHash> # Cherry pick 采用提交commitHash来自编号1的父分支的变动。
+# 一般来说，1号父分支是接受变动的分支（the branch being merged into），2号父分支是作为变动来源的分支（the branch being merged from）。
+```
+
+如果操作过程中发生代码冲突，Cherry pick 会停下来，让用户决定如何继续操作。
+
+（1）--continue
+
+用户解决代码冲突后，第一步将修改的文件重新加入暂存区（git add .），第二步使用下面的命令，让 Cherry pick 过程继续执行。
+
+```shell
+$ git cherry-pick --continue
+```
+
+（2）--abort
+
+发生代码冲突后，放弃合并，回到操作前的样子。
+
+（3）--quit
+
+发生代码冲突后，退出 Cherry pick，但是不回到操作前的样子。
+
+Cherry pick 也支持转移另一个代码库的提交，方法是先将该库加为远程仓库。
+
+```shell
+$ git remote add target git://gitUrl
+$ git fetch target # 将远程代码仓库抓取到本地。
+$ git log target/master # 检查一下要从远程仓库转移的提交，获取它的哈希值。
+$ git cherry-pick <commitHash> # 使用git cherry-pick命令转移提交。
+```
+
+
+### 撤销操作 {#撤销操作}
+
+
+### 撤销提交 {#撤销提交}
+
+一种常见的场景是，提交代码以后，你突然意识到这个提交有问题，应该撤销掉，这时执行下面的命令就可以了。
+
+```shell
+$ git revert HEAD
+```
+
+命令的原理是，在当前提交后面，新增一次提交，抵消掉上一次提交导致的所有变化。它不会改变过去的历史，所以是首选方式，没有任何丢失代码的风险。
+git revert 命令只能抵消上一个提交，如果想抵消多个提交，必须在命令行依次指定这些提交。比如，抵消前两个提交，要像下面这样写。
+
+```shell
+$ git revert [倒数第一个提交] [倒数第二个提交]
+```
+
+git revert命令还有两个参数。
+--no-edit：执行时不打开默认编辑器，直接使用 Git 自动生成的提交信息。
+--no-commit：只抵消暂存区和工作区的文件变化，不产生新的提交。
+
+
+### 丢弃提交 {#丢弃提交}
+
+如果希望以前的提交在历史中彻底消失，而不是被抵消掉，可以使用git reset命令，丢弃掉某个提交之后的所有提交。
+
+```shell
+$ git reset [last SHA]
+```
+
+git reset的原理是，让最新提交的指针回到以前某个时点，该时点之后的提交都从历史中消失。
+
+默认情况下，git reset不改变工作区的文件（但会改变暂存区），--hard参数可以让工作区里面的文件也回到以前的状态。
+
+```shell
+$ git reset --hard [last good SHA]
+```
+
+执行git reset命令之后，如果想找回那些丢弃掉的提交，可以使用git reflog命令。不过，这种做法有时效性，时间长了可能找不回来。
+
+
+### 替换上一次提交 {#替换上一次提交}
+
+提交以后，发现提交信息写错了，这时可以使用git commit命令的--amend参数，可以修改上一次的提交信息。
+
+```shell
+$ git commit --amend -m "Fixes bug #42"
+```
+
+它的原理是产生一个新的提交对象，替换掉上一次提交产生的提交对象。
+
+这时如果暂存区有发生变化的文件，会一起提交到仓库。所以，--amend不仅可以修改提交信息，还可以整个把上一次提交替换掉。
+
+
+### 撤销工作区的文件修改 {#撤销工作区的文件修改}
+
+如果工作区的某个文件被改乱了，但还没有提交，可以用git checkout命令找回本次修改之前的文件。
+
+```shell
+$ git checkout -- [filename]
+```
+
+它的原理是先找暂存区，如果该文件有暂存的版本，则恢复该版本，否则恢复上一次提交的版本。
+
+注意，工作区的文件变化一旦被撤销，就无法找回了。
+
+
+### 从暂存区撤销文件 {#从暂存区撤销文件}
+
+如果不小心把一个文件添加到暂存区，可以用下面的命令撤销。
+
+```shell
+$ git rm --cached [filename] # 不影响已经提交的内容。
+# 最新版本的git推荐使用restore，撤销部分变更
+$ git restore --staged [file]
+# 撤销所有变更
+$ git restore --staged .
+# 撤销所有变更
+$ git reset -- .
+# 撤销暂存区部分变更
+$ git reset -- [file1] [file2]
+```
+
+
+### 代码回滚 {#代码回滚}
+
+你在当前分支上做了几次提交，突然发现引入大量bug，导致代码稳定性，可以执行以下操作。
+
+```shell
+# 代码回滚，不影响历史
+$ git revert [commit-id]
+
+# 撤销丢弃，影响历史提交记录
+$ git reset --hard [当前分支此前的最后一次提交] # 远程分支的该操作一定要团队达成共识，否则很容易导致版本混乱冲突，代码丢失
+```
+
+
+### 江湖救急 {#江湖救急}
+
+在某些场景下，执行提交代码后，忘记提交至远程仓库后，执行了git reset指令，导致代码当前分支下的所有工作被重置。可以使用以下命令拯救愚蠢的操作。
+
+```shell
+# 查看历史操作记录,该记录存在本地，如果本地仓库被彻底破坏，神仙也救不了了。
+$ git reflog
+# 使用git reset --hard 恢复
+$ git reset --hard [command-id]
+# 也可以使用git cherry-pick恢复
+$ git cherry-pick [command-id]
+```
+
+
+### 丢弃工作区所有不受版本控制的文件和目录 {#丢弃工作区所有不受版本控制的文件和目录}
+
+```shell
+$ git clean -fdx
+```
+
+
+### 核弹级操作 {#核弹级操作}
+
+例如，在某些人不经思考把一些二进制文件或包含认证密码信息的文件提交至仓库，可以使用以下命令进行清理。
+
+```shell
+# 删除所有分支中的特殊文件
+$ git filter-branch --tree-filter 'rm -f [file]' HEAD
+# --tree-filter 该参数会在每次检出时先执行命令然后重新提交结果
+```
+
+
+### gitflow 介绍 {#gitflow-介绍}
+
+
+### gitflow 使用 {#gitflow-使用}
+
+
+### gitlab flow介绍 {#gitlab-flow介绍}
+
+
+### gitlab flow使用 {#gitlab-flow使用}
