@@ -318,13 +318,13 @@ Git的设置文件为.gitconfig，它可以在用户主目录下（全局配置�
   $ git clone git@gitlab.org/7ym0n/dotfairy.git
 #+end_src
 
-该命令会在本地主机生成一个目录，与远程主机的版本库同名。如果要指定不同的目录名，可以将目录名作为git clone命令的第二个参数。
+该命令会在本地主机生成一个目录，与远程主机的版本库同名。如果要指定不同的目录名，可以将目录名作为 ~git clone~ 命令的第二个参数。
 
 #+begin_src shell
   $ git clone <版本库的网址> <本地目录名>
 #+end_src
 
-git clone支持多种协议，除了HTTP(s)以外，还支持SSH、Git、本地文件协议等，下面是一些例子。
+~git clone~ 支持多种协议，除了HTTP(s)以外，还支持SSH、Git、本地文件协议等，下面是一些例子。
 
 #+begin_src shell
   $ git clone http[s]://example.com/path/to/repo.git/
@@ -336,9 +336,9 @@ git clone支持多种协议，除了HTTP(s)以外，还支持SSH、Git、本地�
   $ git clone rsync://example.com/path/to/repo.git/
 #+end_src
 *** git remote
-为了便于管理，Git要求每个远程主机都必须指定一个主机名。git remote命令就用于管理主机名。
+为了便于管理，Git要求每个远程主机都必须指定一个主机名。 ~git remote~ 命令就用于管理主机名。
 
-不带选项的时候，git remote命令列出所有远程主机。
+不带选项的时候， ~git remote~ 命令列出所有远程主机。
 #+begin_src shell
   $ git remote
   origin
@@ -351,16 +351,16 @@ git clone支持多种协议，除了HTTP(s)以外，还支持SSH、Git、本地�
   origin	git@gitlab.com:7ym0n/dotfairy.git (push)
 #+end_src
 
-上面命令表示，当前只有一台远程主机，叫做origin，以及它的网址。
+上面命令表示，当前只有一台远程主机，叫做 ~origin~ ，以及它的网址。
 
-克隆版本库的时候，所使用的远程主机自动被Git命名为origin。如果想用其他的主机名，需要用git clone命令的-o选项指定。
+克隆版本库的时候，所使用的远程主机自动被 ~Git~ 命名为 ~origin~ 。如果想用其他的主机名，需要用 ~git clone~ 命令的-o选项指定。
 #+begin_src shell
   $ git clone -o my-dotfairy https://gitlab.org/7ym0n/dotfairy.git
   $ git remote
   my-dotfairy #表示，克隆的时候，指定远程主机叫做my-dotfairy
 #+end_src
 
-git remote show命令加上主机名，可以查看该主机的详细信息。
+~git remote show~ 命令加上主机名，可以查看该主机的详细信息。
 #+begin_src shell
   $ git remote show origin
   * remote origin
@@ -375,28 +375,28 @@ git remote show命令加上主机名，可以查看该主机的详细信息。
       master pushes to master (up to date)
 #+end_src
 
-git remote add命令用于添加远程主机。
+~git remote add~ 命令用于添加远程主机。
 #+begin_src shell
   $ git remote add <主机名> <仓库地址>
 #+end_src
 
-git remote rm命令用于删除远程主机。
+~git remote rm~ 命令用于删除远程主机。
 #+begin_src shell
   $ git remote rm <主机名>
 #+end_src
 
-git remote rename命令用于远程主机的改名。
+~git remote rename~ 命令用于远程主机的改名。
 #+begin_src shell
   $ git remote rename <原主机名> <新主机名>
 #+end_src
 *** git fetch
-一旦远程主机的版本库有了更新（Git术语叫做commit），需要将这些更新取回本地，这时就要用到git fetch命令。
+一旦远程主机的版本库有了更新（Git术语叫做commit），需要将这些更新取回本地，这时就要用到 ~git fetch~ 命令。
 #+begin_src shell
   $ git fetch <远程主机名>
 #+end_src
 git fetch命令通常用来查看其他人的进程，因为它取回的代码对你本地的开发代码没有影响。
 
-默认情况下，git fetch取回所有分支（branch）的更新。如果只想取回特定分支的更新，可以指定分支名。
+默认情况下， ~git fetch~ 取回所有分支（branch）的更新。如果只想取回特定分支的更新，可以指定分支名。
 #+begin_src shell
   $ git fetch <远程主机名> <分支名>
 #+end_src
@@ -406,7 +406,7 @@ git fetch命令通常用来查看其他人的进程，因为它取回的代码�
   $ git fetch origin master
 #+end_src
 
-所取回的更新，在本地主机上要用"远程主机名/分支名"的形式读取。比如origin主机的master，就要用origin/master读取。
+所取回的更新，在本地主机上要用"远程主机名/分支名"的形式读取。比如 ~origin~ 主机的 ~master~ ，就要用 ~origin/master~ 读取。
 
 git branch命令的-r选项，可以用来查看远程分支，-a选项查看所有分支。
 #+begin_src shell
@@ -418,12 +418,12 @@ git branch命令的-r选项，可以用来查看远程分支，-a选项查看所
     remotes/origin/master
 #+end_src
 
-取回远程主机的更新以后，可以在它的基础上，使用git checkout命令创建一个新的分支。
+取回远程主机的更新以后，可以在它的基础上，使用 ~git checkout~ 命令创建一个新的分支。
 #+begin_src shell
   $ git checkout -b newBrach origin/master #表示，在origin/master的基础上，创建一个新分支
 #+end_src
 
-此外，也可以使用git merge命令或者git rebase命令，在本地分支上合并远程分支。
+此外，也可以使用 ~git merge~ 命令或者 ~git rebase~ 命令，在本地分支上合并远程分支。
 #+begin_src shell
   # 表示在当前分支上，合并origin/master
   $ git merge origin/master
@@ -431,7 +431,7 @@ git branch命令的-r选项，可以用来查看远程分支，-a选项查看所
   $ git rebase origin/master
 #+end_src
 *** git pull
-git pull命令的作用是，取回远程主机某个分支的更新，再与本地的指定分支合并。它的完整格式稍稍有点复杂。
+~git pull~ 命令的作用是，取回远程主机某个分支的更新，再与本地的指定分支合并。它的完整格式稍稍有点复杂。
 #+begin_src shell
   $ git pull <远程主机名> <远程分支名>:<本地分支名>
 #+end_src
@@ -449,26 +449,26 @@ git pull命令的作用是，取回远程主机某个分支的更新，再与本
   $ git merge origin/develop
 #+end_src
 
-在某些场合，Git会自动在本地分支与远程分支之间，建立一种追踪关系（tracking）。比如，在git clone的时候，所有本地分支默认与远程主机的同名分支，建立追踪关系，也就是说，本地的master分支自动"追踪"origin/master分支。
+在某些场合，Git会自动在本地分支与远程分支之间，建立一种追踪关系（tracking）。比如，在 ~git clone~ 的时候，所有本地分支默认与远程主机的同名分支，建立追踪关系，也就是说，本地的 ~master~ 分支自动"追踪" ~origin/master~ 分支。
 
 Git也允许手动建立追踪关系。
 #+begin_src shell
   git branch --set-upstream master origin/develop
 #+end_src
 
-如果当前分支与远程分支存在追踪关系，git pull就可以省略远程分支名。
+如果当前分支与远程分支存在追踪关系， ~git pull~ 就可以省略远程分支名。
 #+begin_src shell
   $ git pull origin
   #如果当前分支只有一个追踪分支，连远程主机名都可以省略。
   $ git pull #当前分支自动与唯一一个追踪分支进行合并。
 #+end_src
 
-如果合并需要采用rebase模式，可以使用--rebase选项。
+如果合并需要采用rebase模式，可以使用 ~--rebase~ 选项。
 #+begin_src shell
   $ git pull --rebase <远程主机名> <远程分支名>:<本地分支名>
 #+end_src
 
-如果远程主机删除了某个分支，默认情况下，git pull 不会在拉取远程分支的时候，删除对应的本地分支。这是为了防止，由于其他人操作了远程主机，导致git pull不知不觉删除了本地分支。
+如果远程主机删除了某个分支，默认情况下， ~git pull~ 不会在拉取远程分支的时候，删除对应的本地分支。这是为了防止，由于其他人操作了远程主机，导致 ~git pull~ 不知不觉删除了本地分支。
 
 但是，你可以改变这个行为，加上参数 -p 就会在本地删除远程已经删除的分支。
 #+begin_src shell
@@ -479,12 +479,12 @@ Git也允许手动建立追踪关系。
 #+end_src
 
 *** git push
-git push命令用于将本地分支的更新，推送到远程主机。它的格式与git pull命令相仿。
+~git push~ 命令用于将本地分支的更新，推送到远程主机。它的格式与 ~git pull~ 命令相仿。
 #+begin_src shell
   $ git push <远程主机名> <本地分支名>:<远程分支名>
 #+end_src
 
-注意，分支推送顺序的写法是<来源地>:<目的地>，所以git pull是<远程分支>:<本地分支>，而git push是<本地分支>:<远程分支>。
+注意，分支推送顺序的写法是<来源地>:<目的地>，所以 ~git pull~ 是<远程分支>:<本地分支>，而 ~git push~ 是<本地分支>:<远程分支>。
 
 如果省略远程分支名，则表示将本地分支推送与之存在"追踪关系"的远程分支（通常两者同名），如果该远程分支不存在，则会被新建。
 #+begin_src shell
@@ -508,39 +508,39 @@ git push命令用于将本地分支的更新，推送到远程主机。它的格
   $ git push
 #+end_src
 
-如果当前分支与多个主机存在追踪关系，则可以使用-u选项指定一个默认主机，这样后面就可以不加任何参数使用git push。
+如果当前分支与多个主机存在追踪关系，则可以使用-u选项指定一个默认主机，这样后面就可以不加任何参数使用 ~git push~ 。
 #+begin_src shell
   $ git push -u origin master
 #+end_src
 
-上面命令将本地的master分支推送到origin主机，同时指定origin为默认主机，后面就可以不加任何参数使用git push了。
+上面命令将本地的master分支推送到origin主机，同时指定origin为默认主机，后面就可以不加任何参数使用 ~git push~ 了。
 
-不带任何参数的git push，默认只推送当前分支，这叫做simple方式。此外，还有一种matching方式，会推送所有有对应的远程分支的本地分支。Git 2.0版本之前，默认采用matching方法，现在改为默认采用simple方式。如果要修改这个设置，可以采用git config命令。
+不带任何参数的 ~git push~ ，默认只推送当前分支，这叫做simple方式。此外，还有一种matching方式，会推送所有有对应的远程分支的本地分支。Git 2.0版本之前，默认采用matching方法，现在改为默认采用simple方式。如果要修改这个设置，可以采用git config命令。
 #+begin_src shell
   $ git config --global push.default matching
   # 或者
   $ git config --global push.default simple
 #+end_src
 
-还有一种情况，就是不管是否存在对应的远程分支，将本地的所有分支都推送到远程主机，这时需要使用--all选项。
+还有一种情况，就是不管是否存在对应的远程分支，将本地的所有分支都推送到远程主机，这时需要使用 ~--all~ 选项。
 #+begin_src shell
   $ git push --all origin
 #+end_src
 
-如果远程主机的版本比本地版本更新，推送时Git会报错，要求先在本地做git pull合并差异，然后再推送到远程主机。这时，如果你一定要推送，可以使用--force选项。
+如果远程主机的版本比本地版本更新，推送时Git会报错，要求先在本地做 ~git pull~ 合并差异，然后再推送到远程主机。这时，如果你一定要推送，可以使用 ~--force~ 选项。
 #+begin_src shell
   $ git push --force origin #使用--force选项，结果导致远程主机上更新的版本被覆盖。除非你很确定要这样做，否则应该尽量避免使用--force选项
 #+end_src
 
-最后，git push不会推送标签（tag），除非使用--tags选项。
+最后，git push不会推送标签（tag），除非使用 ~--tags~ 选项。
 #+begin_src shell
   $ git push origin --tags
 #+end_src
 
 *** git bisect
-git bisect是一个很有用的命令，用来查找哪一次代码提交引入了错误。
+~git bisect~ 是一个很有用的命令，用来查找哪一次代码提交引入了错误。
 它的原理很简单，就是将代码提交的历史，按照两分法不断缩小定位。所谓"两分法"，就是将代码历史一分为二，确定问题出在前半部分，还是后半部分，不断执行这个过程，直到范围缩小到某一次代码提交。
-git bisect start命令启动查错，它的格式如下。
+~git bisect start~ 命令启动查错，它的格式如下。
 #+begin_src shell
   $ git bisect start [终点] [起点]
 #+end_src
@@ -550,28 +550,28 @@ git bisect start命令启动查错，它的格式如下。
   $ git bisect start HEAD 186356c
 #+end_src
 
-确定正常工作。使用git bisect good命令，标识本次提交（第N次）没有问题。
+确定正常工作。使用 ~git bisect good~ 命令，标识本次提交（第N次）没有问题。
 #+begin_src shell
   $ git bisect good
 #+end_src
 
-确定不能正常工作。使用git bisect bad命令，标识本次提交（第N次）有问题。
+确定不能正常工作。使用 ~git bisect bad~ 命令，标识本次提交（第N次）有问题。
 #+begin_src shell
   $ git bisect bad
 #+end_src
 
 接下来，不断重复这个过程，直到成功找到出问题的那一次提交为止。这时，Git 会给出如下的提示。
-<commit id> is the first bad commit
+~<commit id> is the first bad commit~
 
-然后，使用git bisect reset命令，退出查错，回到最近一次的代码提交。
+然后，使用 ~git bisect reset~ 命令，退出查错，回到最近一次的代码提交。
 #+begin_src shell
   $ git bisect reset
 #+end_src
 
 *** git cherry-pick
 对于多分支的代码库，将代码从一个分支转移到另一个分支是常见需求。
-这时分两种情况。一种情况是，你需要另一个分支的所有代码变动，那么就采用合并（git merge）。另一种情况是，你只需要部分代码变动（某几个提交），这时可以采用 Cherry pick。
-git cherry-pick命令的作用，就是将指定的提交（commit）应用于其他分支。
+这时分两种情况。一种情况是，你需要另一个分支的所有代码变动，那么就采用合并（ ~git merge~ ）。另一种情况是，你只需要部分代码变动（某几个提交），这时可以采用 Cherry pick。
+~git cherry-pick~ 命令的作用，就是将指定的提交（commit）应用于其他分支。
 #+begin_src shell
   $ git cherry-pick <commitHash> # 将指定的提交commitHash，应用于当前分支。这会在当前分支产生一个新的提交，当然它们的哈希值会不一样。
 #+end_src
@@ -596,11 +596,11 @@ Cherry pick 支持一次转移多个提交。
 
 git cherry-pick命令的常用配置项如下。
 
-（1）-e，--edit
+（1）-e， ~--edit~
 
 打开外部编辑器，编辑提交信息。
 
-（2）-n，--no-commit
+（2）-n， ~--no-commit~
 
 只更新工作区和暂存区，不产生新的提交。
 
@@ -608,11 +608,11 @@ git cherry-pick命令的常用配置项如下。
 
 在提交信息的末尾追加一行(cherry picked from commit ...)，方便以后查到这个提交是如何产生的。
 
-（4）-s，--signoff
+（4）-s， ~--signoff~
 
 在提交信息的末尾追加一行操作者的签名，表示是谁进行了这个操作。
 
-（5）-m parent-number，--mainline parent-number
+（5）-m parent-number， ~--mainline parent-number~
 
 如果原始提交是一个合并节点，来自于两个分支的合并，那么 Cherry pick 默认将失败，因为它不知道应该采用哪个分支的代码变动。
 
@@ -624,22 +624,22 @@ git cherry-pick命令的常用配置项如下。
 
 如果操作过程中发生代码冲突，Cherry pick 会停下来，让用户决定如何继续操作。
 
-（1）--continue
+（1） ~--continue~
 
-用户解决代码冲突后，第一步将修改的文件重新加入暂存区（git add .），第二步使用下面的命令，让 Cherry pick 过程继续执行。
+用户解决代码冲突后，第一步将修改的文件重新加入暂存区（ ~git add .~ ），第二步使用下面的命令，让 Cherry pick 过程继续执行。
 #+begin_src shell
   $ git cherry-pick --continue
 #+end_src
 
-（2）--abort
+（2） ~--abort~
 
 发生代码冲突后，放弃合并，回到操作前的样子。
 
-（3）--quit
+（3） ~--quit~
 
-发生代码冲突后，退出 Cherry pick，但是不回到操作前的样子。
+发生代码冲突后，退出 ~Cherry pick~ ，但是不回到操作前的样子。
 
-Cherry pick 也支持转移另一个代码库的提交，方法是先将该库加为远程仓库。
+~Cherry pick~ 也支持转移另一个代码库的提交，方法是先将该库加为远程仓库。
 #+begin_src shell
   $ git remote add target git://gitUrl
   $ git fetch target # 将远程代码仓库抓取到本地。
@@ -656,42 +656,42 @@ Cherry pick 也支持转移另一个代码库的提交，方法是先将该库�
 #+end_src
 
 命令的原理是，在当前提交后面，新增一次提交，抵消掉上一次提交导致的所有变化。它不会改变过去的历史，所以是首选方式，没有任何丢失代码的风险。
-git revert 命令只能抵消上一个提交，如果想抵消多个提交，必须在命令行依次指定这些提交。比如，抵消前两个提交，要像下面这样写。
+~git revert~ 命令只能抵消上一个提交，如果想抵消多个提交，必须在命令行依次指定这些提交。比如，抵消前两个提交，要像下面这样写。
 #+begin_src shell
   $ git revert [倒数第一个提交] [倒数第二个提交]
 #+end_src
 
-git revert命令还有两个参数。
---no-edit：执行时不打开默认编辑器，直接使用 Git 自动生成的提交信息。
---no-commit：只抵消暂存区和工作区的文件变化，不产生新的提交。
+~git revert~ 命令还有两个参数。
+~--no-edit~ ：执行时不打开默认编辑器，直接使用 Git 自动生成的提交信息。
+~--no-commit~ ：只抵消暂存区和工作区的文件变化，不产生新的提交。
 
 *** 丢弃提交
-如果希望以前的提交在历史中彻底消失，而不是被抵消掉，可以使用git reset命令，丢弃掉某个提交之后的所有提交。
+如果希望以前的提交在历史中彻底消失，而不是被抵消掉，可以使用 ~git reset~ 命令，丢弃掉某个提交之后的所有提交。
 #+begin_src shell
   $ git reset [last SHA]
 #+end_src
 
-git reset的原理是，让最新提交的指针回到以前某个时点，该时点之后的提交都从历史中消失。
+~git reset~ 的原理是，让最新提交的指针回到以前某个时点，该时点之后的提交都从历史中消失。
 
-默认情况下，git reset不改变工作区的文件（但会改变暂存区），--hard参数可以让工作区里面的文件也回到以前的状态。
+默认情况下， ~git reset~ 不改变工作区的文件（但会改变暂存区）， ~--hard~ 参数可以让工作区里面的文件也回到以前的状态。
 #+begin_src shell
   $ git reset --hard [last good SHA]
 #+end_src
 
-执行git reset命令之后，如果想找回那些丢弃掉的提交，可以使用git reflog命令。不过，这种做法有时效性，时间长了可能找不回来。
+执行 ~git reset~ 命令之后，如果想找回那些丢弃掉的提交，可以使用 ~git reflog~ 命令。不过，这种做法有时效性，时间长了可能找不回来。
 
 *** 替换上一次提交
-提交以后，发现提交信息写错了，这时可以使用git commit命令的--amend参数，可以修改上一次的提交信息。
+提交以后，发现提交信息写错了，这时可以使用 ~git commit~ 命令的 ~--amend~ 参数，可以修改上一次的提交信息。
 #+begin_src shell
   $ git commit --amend -m "Fixes bug #42"
 #+end_src
 
 它的原理是产生一个新的提交对象，替换掉上一次提交产生的提交对象。
 
-这时如果暂存区有发生变化的文件，会一起提交到仓库。所以，--amend不仅可以修改提交信息，还可以整个把上一次提交替换掉。
+这时如果暂存区有发生变化的文件，会一起提交到仓库。所以， ~--amend~ 不仅可以修改提交信息，还可以整个把上一次提交替换掉。
 
 *** 撤销工作区的文件修改
-如果工作区的某个文件被改乱了，但还没有提交，可以用git checkout命令找回本次修改之前的文件。
+如果工作区的某个文件被改乱了，但还没有提交，可以用 ~git checkout~ 命令找回本次修改之前的文件。
 #+begin_src shell
   $ git checkout -- [filename]
 #+end_src
@@ -725,7 +725,7 @@ git reset的原理是，让最新提交的指针回到以前某个时点，该�
 #+end_src
 
 *** 江湖救急
-在某些场景下，执行提交代码后，忘记提交至远程仓库后，执行了git reset指令，导致代码当前分支下的所有工作被重置。可以使用以下命令拯救愚蠢的操作。
+在某些场景下，执行提交代码后，忘记提交至远程仓库后，执行了 ~git reset~ 指令，导致代码当前分支下的所有工作被重置。可以使用以下命令拯救愚蠢的操作。
 #+begin_src shell
   # 查看历史操作记录,该记录存在本地，如果本地仓库被彻底破坏，神仙也救不了了。
   $ git reflog
