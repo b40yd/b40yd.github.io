@@ -1,7 +1,7 @@
 +++
 title = "依赖包管理 - 如何自定义编辑器"
 date = 2021-04-16
-lastmod = 2021-04-17T23:50:38+08:00
+lastmod = 2021-04-23T23:53:30+08:00
 tags = ["Emacs", "编辑器", "package"]
 categories = ["Emacs", "编辑器", "package"]
 draft = false
@@ -50,8 +50,11 @@ author = "7ym0n"
 
 ### 安装 {#安装}
 
-使用安装命令 `M-x package-install RET <package_name>` 可以直接输入包名进行安装。下载安装的包会自动存放在 `/.emacs.d/elpa/`
-目录下。
+使用安装命令 `M-x package-install RET <package_name>` 可以直接输入包名进行安装。下载安装的包会自动存放在 `/.emacs.d/elpa/~目录下。可以通过设置 ~package-user-dir` 变量，指定下载安装的包的目录位置。
+
+```emacs-lisp
+(setq package-user-dir "your package dir")
+```
 
 
 ### 重新安装 {#重新安装}
@@ -93,3 +96,140 @@ author = "7ym0n"
 
 
 ## 代码实现 {#代码实现}
+
+打开 `init-package.el` 添加以下内容：
+
+```emacs-lisp
+(defcustom dotfile-package-archives-alist
+  (let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
+                      (not (gnutls-available-p))))
+         (proto (if no-ssl "http" "https")))
+    `(,(cons 'melpa
+             `(,(cons "gnu"   (concat proto "://elpa.gnu.org/packages/"))
+               ,(cons "melpa" (concat proto "://melpa.org/packages/"))))
+      ,(cons 'emacs-china
+             `(,(cons "gnu"   (concat proto "://elpa.emacs-china.org/gnu/"))
+               ,(cons "melpa" (concat proto "://elpa.emacs-china.org/melpa/"))))
+      ,(cons 'netease
+             `(,(cons "gnu"   (concat proto "://mirrors.163.com/elpa/gnu/"))
+               ,(cons "melpa" (concat proto "://mirrors.163.com/elpa/melpa/"))))
+      ,(cons 'ustc
+             `(,(cons "gnu"   (concat proto "://mirrors.ustc.edu.cn/elpa/gnu/"))
+               ,(cons "melpa" (concat proto "://mirrors.ustc.edu.cn/elpa/melpa/"))))
+      ,(cons 'tencent
+             `(,(cons "gnu"   (concat proto "://mirrors.cloud.tencent.com/elpa/gnu/"))
+               ,(cons "melpa" (concat proto "://mirrors.cloud.tencent.com/elpa/melpa/"))))
+      ,(cons 'tuna
+             `(,(cons "gnu"   (concat proto "://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/"))
+               ,(cons "melpa" (concat proto "://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/"))))))
+  "The package archives group list."
+  :group 'dotfile
+  :type '(alist :key-type (symbol :tag "Archive group name")
+                :value-type (alist :key-type (string :tag "Archive name")
+                                   :value-type (string :tag "URL or directory name"))))
+
+(defcustom dotfile-package-archives 'melpa
+  "Set package archives from which to fetch."
+  :group 'dotfile
+  :set (lambda (symbol value)
+         (set symbol value)
+         ()
+         (setq package-archives
+               (or (alist-get value dotfile-package-archives-alist)
+                   (error "Unknown package archives: `%s'" value))))
+  :type `(choice ,@(mapcar
+                    (lambda (item)
+                      (let ((name (car item)))
+                        (list 'const
+                              :tag (capitalize (symbol-name name))
+                              name)))
+                    dotfile-package-archives-alist)))
+
+(defun set-package-archives (archives &optional refresh async)
+  "Set the package archives (ELPA).
+REFRESH is non-nil, will refresh archive contents.
+ASYNC specifies whether to perform the downloads in the background.
+Save to `custom-file' if NO-SAVE is nil."
+  (interactive
+   (list
+    (intern (completing-read "Select package archives: "
+                             (mapcar #'car dotfile-package-archives-alist)))))
+  ;; Set option
+  (customize-set-variable 'dotfile-package-archives archives)
+  ;; Refresh if need
+  (and refresh (package-refresh-contents async))
+  (message "Set package archives to `%s'" archives))
+
+(set-package-archives 'ustc t t)
+```
+
+这里使用了以前没见过的 `defcustom`&nbsp;[^fn:1]宏，后面会经常看到，或者在其他第三方配置中常见的，配置自定义变量，经常用于提供自定义的配置，指定变量值的类型，在使用 `customize-set-variable` 设置自定义变量时，会调用 `:set` 属性，该属性是一个 `setfunction`
+，所以，会看到这里的 `dotfile-package-archives` 的 `:set` 中定义了一个匿名函数，在函数中去真正给 `package-archives` 设置指定的仓库源。 `set-package-archives` 是我们设置仓库源的入口函数，该函数的作用是去设置仓库源，并判断是否更新 `package-list` ，并指定是否异步请求。
+
+接下来需要安装 `use-package` ，并使用它安装需要的软件包。在安装该包时，需要先使用 `package-initialize` 初始化。如果已经初始化，将禁止包加载并重新初始化。 如果 `use-package` 没有安装，更新 `package-list` 使用 `package-install` 命令安装，并修改
+`use-package` 的默认参数。由于安装时需要公钥，需要安装 `gnu-elpa-keyring-update` 。
+
+```emacs-lisp
+;; Initialize packages
+(unless (bound-and-true-p package--initialized) ; To avoid warnings in 27
+  (setq package-enable-at-startup nil)          ; To prevent initializing twice
+  (package-initialize))
+;; Setup `use-package'
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+
+(eval-and-compile
+  (setq use-package-always-ensure t)
+  (setq use-package-always-defer t)
+  (setq use-package-expand-minimally t)
+  (setq use-package-enable-imenu-support t))
+
+;; Update GPG keyring for GNU ELPA
+(use-package gnu-elpa-keyring-update)
+```
+
+安装 `straight.el` 需要去 `github` 源码仓库下载，所以国内的用户，在这个时候需要使用到前面的代理了，否则无法安装（这也是为什么会先配置代理）。启动自己的代理服务，然后通过命令 `proxy-http-toggle` 设置代理环境。以下代码来自 `straight.el` 官方[^fn:2]。并配置使用 `use-package` 通过 `straight` 属性安装第三方包，详细使用方法参考官方文档[^fn:2]。
+
+```emacs-lisp
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+(straight-use-package 'use-package)
+```
+
+由于默认的 `package-list` 在更新安装时会阻塞，导致无法继续其他工作，所以可以通过安装 `paradox` 来优化默认的列表 `buffer` ，并使用 `paradox-enable` 替换 `package-list` 命令。注意快捷键也有明显的变化。可以通过按键 `h` 查看。
+
+{{< figure src="/manual/package-list.png" >}}
+
+```emacs-lisp
+;; A modern Packages Menu
+(use-package paradox
+  :init
+  (setq paradox-execute-asynchronously t
+        paradox-github-token t
+        paradox-display-star-count nil)
+  ;; Replace default `list-packages'
+  (defun my-paradox-enable (&rest _)
+    "Enable paradox, overriding the default package-menu."
+    (paradox-enable))
+  (advice-add #'list-packages :before #'my-paradox-enable)
+  )
+```
+
+
+## 愉快的玩耍 {#愉快的玩耍}
+
+接下来就可以愉快的玩耍了。
+
+[^fn:1]: <https://www.gnu.org/software/emacs/manual/html%5Fnode/elisp/Variable-Definitions.html#Variable-Definitions>
+[^fn:2]: <https://github.com/raxod502/straight.el>
