@@ -1,7 +1,7 @@
 +++
 title = "设置代理 - 如何自定义编辑器"
 date = 2021-04-16
-lastmod = 2021-04-17T20:58:49+08:00
+lastmod = 2021-04-19T11:01:44+08:00
 tags = ["Emacs", "编辑器", "Proxy"]
 categories = ["Emacs", "编辑器", "Proxy"]
 draft = false
@@ -107,9 +107,12 @@ Shell环境中可以设置 `https_proxy` 和 `http_proxy` 变量，这样用命�
   "Enable SOCKS proxy."
   (interactive)
   (require 'socks)
-  (setq url-gateway-method 'socks
-        socks-noproxy '("localhost")
-        socks-server '("Default server" "127.0.0.1" 1086 5))
+  (let* ((proxy (split-string default-proxy "\\s-*:\\s-*"))
+         (addr (car proxy))
+         (port (string-to-number (cadr proxy))))
+    (setq url-gateway-method 'socks
+          socks-noproxy '("localhost")
+          socks-server `("Default server" ,addr ,port 5)))
   (proxy-socks-show))
 
 (defun proxy-socks-disable ()
