@@ -1,9 +1,29 @@
 #+title: 关于我
-#+hugo_base_dir: ../
-#+hugo_section: post
-#+hugo_menu: menu main :name About :weight 12
+#+author:
+#+HUGO_MENU: menu main :name About :weight 12
+#+HUGO_CUSTOM_FRONT_MATTER: :author "7ym0n"
+#+HUGO_BASE_DIR: ../
+#+HUGO_SECTION: post/
+#+HUGO_AUTO_SET_LASTMOD: t
+#+HUGO_TAGS: prefile
+#+HUGO_CATEGORIES: prefile
+#+HUGO_DRAFT: false
+#+HUGO_TOC: true
 
-
+* 简介
+2008年毕业于某技校。
 #+begin_quote
 这个家伙很懒！最大的爱好吃喝玩乐!!!
 #+end_quote
+
+* 使用编程语言
+#+begin_src emacs-lisp :tangle yes
+    (use-skill (choice '((System . '(C Rust))
+                         (Data . Python)
+                         (Hack . Lisp/Scheme)
+                         (Concurrent . Go)
+                         ;; (Site . PHP)
+                         ;; (Mobile . '(Java Swift))
+                         (Bat . Shell)
+                         (Editor . '(Emacs Vim)))))
+#+end_src

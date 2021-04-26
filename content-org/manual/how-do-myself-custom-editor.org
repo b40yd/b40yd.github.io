@@ -31,6 +31,7 @@ BTW：我不太喜欢在系统中装一堆的编辑器，我见过在系统上�
 - [[/post/manual/basic-config/][基本配置]]
 - [[/post/manual/proxy/][设置代理]]
 - [[/post/manual/package/][依赖包管理]]
+- [[/post/manual/hydra-binding/][快捷键管理]]
 - [[/post/manual/quick-edit][快速编辑]]
 - Buffer
 - Window
