@@ -149,8 +149,7 @@
     :init (with-eval-after-load 'org
             (bind-key "<C-M-return>" #'rect-hydra/body org-mode-map))
     :pretty-hydra
-    ((:title (pretty-hydra-title "Rectangle" 'material "border_all" :height 1.1 :v-adjust -0.225)
-             :color amaranth :body-pre (rectangle-mark-mode) :post (deactivate-mark) :quit-key ("q" "C-g"))
+    ((:title "Rectangle" :color amaranth :body-pre (rectangle-mark-mode) :post (deactivate-mark) :quit-key ("q" "C-g"))
      ("Move"
       (("h" backward-char "←")
        ("j" next-line "↓")
@@ -244,8 +243,7 @@
   ;; Multiple cursors
   (use-package multiple-cursors
     :pretty-hydra
-    ((:title (pretty-hydra-title "Multiple-Cursors" 'material "border_all" :height 1.1 :v-adjust -0.225)
-             :color amaranth :quit-key ("q" "C-g"))
+    ((:title "Multiple-Cursors" :color amaranth :quit-key ("q" "C-g"))
      ("Actions"
       (
        ("@" set-rectangular-region-anchor               "set-mark except you're marking a rectangular region")
@@ -369,27 +367,6 @@
   (use-package smart-region
     :hook (after-init . smart-region-on))
 
-  (use-package pomidor
-    :bind ("<f12>" . pomidor)
-    :init
-    (setq alert-default-style 'mode-line)
-
-    (with-eval-after-load 'all-the-icons
-      (setq alert-severity-faces
-            '((urgent   . all-the-icons-red)
-              (high     . all-the-icons-orange)
-              (moderate . all-the-icons-yellow)
-              (normal   . all-the-icons-green)
-              (low      . all-the-icons-blue)
-              (trivial  . all-the-icons-purple))
-            alert-severity-colors
-            `((urgent   . ,(face-foreground 'all-the-icons-red))
-              (high     . ,(face-foreground 'all-the-icons-orange))
-              (moderate . ,(face-foreground 'all-the-icons-yellow))
-              (normal   . ,(face-foreground 'all-the-icons-green))
-              (low      . ,(face-foreground 'all-the-icons-blue))
-              (trivial  . ,(face-foreground 'all-the-icons-purple))))))
-
   (use-package wgrep
     :init
     (setq wgrep-auto-save-buffer t
@@ -469,16 +446,6 @@
            (iedit-mode . turn-off-symbol-overlay)
            (iedit-mode-end . turn-on-symbol-overlay))
     :init (setq symbol-overlay-idle-time 0.1)
-    (with-eval-after-load 'all-the-icons
-      (setq symbol-overlay-faces
-            '((:inherit (all-the-icons-blue bold) :inverse-video t)
-              (:inherit (all-the-icons-pink bold) :inverse-video t)
-              (:inherit (all-the-icons-yellow bold) :inverse-video t)
-              (:inherit (all-the-icons-purple bold) :inverse-video t)
-              (:inherit (all-the-icons-red bold) :inverse-video t)
-              (:inherit (all-the-icons-orange bold) :inverse-video t)
-              (:inherit (all-the-icons-green bold) :inverse-video t)
-              (:inherit (all-the-icons-cyan bold) :inverse-video t))))
     :config
     ;; Disable symbol highlighting while selecting
     (defun turn-off-symbol-overlay (&rest _)
@@ -528,8 +495,7 @@
   ;; Jump to definition
   (use-package dumb-jump
     :pretty-hydra
-    ((:title (pretty-hydra-title "Dump Jump" 'faicon "anchor")
-             :color blue :quit-key "q")
+    ((:title "Dump Jump" :color blue :quit-key "q")
      ("Jump"
       (("j" dumb-jump-go "Go")
        ("o" dumb-jump-go-other-window "Go other window")
@@ -563,8 +529,7 @@
   ;; Flexible text folding
   (use-package origami
     :pretty-hydra
-    ((:title (pretty-hydra-title "Origami" 'octicon "fold" :height 1.1 :v-adjust -0.05)
-             :color amaranth :quit-key "q")
+    ((:title "Origami" :color amaranth :quit-key "q")
      ("Node"
       ((":" origami-recursively-toggle-node "toggle recursively")
        ("a" origami-toggle-all-nodes "toggle all")
@@ -584,19 +549,6 @@
     ;; https://github.com/emacs-lsp/lsp-origami/
     (use-package lsp-origami
       :hook ((lsp-after-open . lsp-origami-try-enable))))
-
-  ;; Highlight some operations
-  (use-package volatile-highlights
-    :diminish
-    :hook (after-init . volatile-highlights-mode)
-    :config
-    (with-no-warnings
-      (when (fboundp 'pulse-momentary-highlight-region)
-        (defun my-vhl-pulse (beg end &optional _buf face)
-          "Pulse the changes."
-          (pulse-momentary-highlight-region beg end face))
-        (advice-add #'vhl/.make-hl :override #'my-vhl-pulse))))
-
 
   (provide 'init-iedit)
   ;;; init-iedit.el ends here
