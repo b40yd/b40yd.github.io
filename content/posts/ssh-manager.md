@@ -1,7 +1,7 @@
 +++
 title = "在Emacs里面SSH管理远程服务器"
 date = 2021-08-28
-lastmod = 2021-08-28T22:00:41+08:00
+lastmod = 2021-08-28T22:03:09+08:00
 tags = ["Emacs", "SSH"]
 categories = ["Emacs", "SSH"]
 draft = false
@@ -68,4 +68,4 @@ sudo pacman -Syy oath-toolkit
 
 ## 效果 {#效果}
 
-[预览](/ssh-manager.png)
+{{< figure src="/ssh-manager.png" >}}

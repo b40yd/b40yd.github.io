@@ -56,4 +56,4 @@ sudo pacman -Syy oath-toolkit
 
 * 效果
 
-[[file:~/repos/gitlab.com/scanbuf/static/ssh-manager.png][预览]]
+[[file:~/repos/gitlab.com/scanbuf/static/ssh-manager.png]]
