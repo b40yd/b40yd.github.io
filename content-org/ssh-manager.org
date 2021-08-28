@@ -1,5 +1,5 @@
 #+TITLE: 在Emacs里面SSH管理远程服务器
-#+AUTHOR: 7ym0n
+#+AUTHOR:
 #+DATE: 2021-08-28
 #+HUGO_CUSTOM_FRONT_MATTER: :author "7ym0n"
 #+HUGO_BASE_DIR: ../

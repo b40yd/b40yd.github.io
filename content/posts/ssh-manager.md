@@ -1,8 +1,7 @@
 +++
 title = "在Emacs里面SSH管理远程服务器"
-author = ["7ym0n"]
 date = 2021-08-28
-lastmod = 2021-08-28T21:57:20+08:00
+lastmod = 2021-08-28T22:00:41+08:00
 tags = ["Emacs", "SSH"]
 categories = ["Emacs", "SSH"]
 draft = false
