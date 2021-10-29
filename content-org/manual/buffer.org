@@ -17,6 +17,7 @@
 - 关闭匹配到的 *buffer*
 
 * 实现
+代码参考[[https://github.com/hlissner/doom-emacs][doom-emacs]]。
 #+begin_src elisp
 ;;;###autoload
 (defvar dotfairy-real-buffer-functions

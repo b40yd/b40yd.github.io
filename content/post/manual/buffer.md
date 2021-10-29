@@ -1,7 +1,7 @@
 +++
 title = "Buffer管理"
 date = 2021-10-29
-lastmod = 2021-10-29T14:29:17+08:00
+lastmod = 2021-10-29T14:32:33+08:00
 draft = false
 author = "7ym0n"
 +++
@@ -15,6 +15,8 @@ author = "7ym0n"
 - 关闭匹配到的 **buffer**
 
 ## 实现 {#实现}
+
+代码参考[doom-emacs](https://github.com/hlissner/doom-emacs)。
 
 ```elisp
 ;;;###autoload

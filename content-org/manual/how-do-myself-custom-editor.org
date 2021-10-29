@@ -33,7 +33,7 @@ BTW：我不太喜欢在系统中装一堆的编辑器，我见过在系统上�
 - [[/post/manual/package/][依赖包管理]]
 - [[/post/manual/hydra-binding/][快捷键管理]]
 - [[/post/manual/quick-edit][快速编辑]]
-- [[/post/manual/buferr][Buffer]]
+- [[/post/manual/buffer][Buffer]]
 - [[/post/manual/window][Window]]
 - 高亮设置
 - 目录操作

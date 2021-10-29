@@ -1,7 +1,7 @@
 +++
 title = "如何自定义编辑器"
 date = 2021-04-01
-lastmod = 2021-10-29T14:16:33+08:00
+lastmod = 2021-10-29T14:33:20+08:00
 tags = ["Emacs", "编辑器"]
 categories = ["Emacs", "编辑器"]
 draft = false
@@ -28,7 +28,7 @@ BTW：我不太喜欢在系统中装一堆的编辑器，我见过在系统上�
 - [依赖包管理](/post/manual/package/)
 - [快捷键管理](/post/manual/hydra-binding/)
 - [快速编辑](/post/manual/quick-edit)
-- [Buffer](/post/manual/buferr)
+- [Buffer](/post/manual/buffer)
 - [Window](/post/manual/window)
 - 高亮设置
 - 目录操作
