@@ -1,7 +1,7 @@
 baseURL = "https://www.scanbuf.net/"
 languageCode = "en"
 defaultContentLanguage = "zh-cn"                             # en / zh-cn / ... (This field determines which i18n file to use)
-title = "7ym0n - 个人技术分享，记录生活"
+title = "B40yd - 个人技术分享，记录生活"
 preserveTaxonomyNames = true
 enableRobotsTXT = true
 enableEmoji = true
@@ -16,7 +16,7 @@ pygmentsCodefencesGuessSyntax = true
 
 hasCJKLanguage = true     # has chinese/japanese/korean ? # 自动检测是否包含 中文\日文\韩文
 paginate = 10                                              # 首页每页显示的文章数
-copyright = "7ym0n"            # default: author.name ↓        # 默认为下面配置的author.name ↓
+copyright = "B40yd"            # default: author.name ↓        # 默认为下面配置的author.name ↓
 
 [[Config.Services.Disqus]]
 Shortname = ""      # disqus_shortname
@@ -24,7 +24,7 @@ Shortname = ""      # disqus_shortname
 ID = "UA-39903197-1"      # UA-XXXXXXXX-X
 
 [author]                  # essential                     # 必需
-  name = "7ym0n"
+  name = "B40yd"
 
 [sitemap]                 # essential                     # 必需
   changefreq = "weekly"
@@ -58,7 +58,7 @@ ID = "UA-39903197-1"      # UA-XXXXXXXX-X
   url = "/post/manual/how-do-myself-custom-editor/"
 
 [params]
-  author = "7ym0n"
+  author = "B40yd"
   version = "4.x"           # Used to give a friendly message when you have an incompatible update
   debug = false             # If true, load `eruda.min.js`. See https://github.com/liriliri/eruda
 
@@ -68,7 +68,7 @@ ID = "UA-39903197-1"      # UA-XXXXXXXX-X
   gitRepo = ""
 
   # site info (optional)                                  # 站点信息（可选，不需要的可以直接注释掉）
-  logoTitle = "7ym0n"        # default: the title value    # 默认值: 上面设置的title值
+  logoTitle = "B40yd"        # default: the title value    # 默认值: 上面设置的title值
   keywords = ["自由软件", "开源软件","信息安全"]
   description = "个人自由软件技术分享博客"
 
@@ -150,8 +150,8 @@ ID = "UA-39903197-1"      # UA-XXXXXXXX-X
     repo = ""               # The repo to store comments
 
   [params.gitalk]           # Gitalk is a comment system based on GitHub issues. see https://github.com/gitalk/gitalk
-    owner = "7ym0n"              # Your GitHub ID
-    repo = "7ym0n.github.io"               # The repo to store comments
+    owner = "B40yd"              # Your GitHub ID
+    repo = "b40yd.github.io"               # The repo to store comments
     clientId = "73733d18565825f17b08"           # Your client ID
     clientSecret = "c58112d2e73ddb5486dea04d3a9867ffdb70edc9"       # Your client secret
 
@@ -190,18 +190,18 @@ ID = "UA-39903197-1"      # UA-XXXXXXXX-X
   [params.social]                                         # 社交链接
     a-email = "mailto:bb.qnyd@gmail.com"
     b-stack-overflow = ""
-    c-twitter = "https://twitter.com/7ym0n"
+    c-twitter = "https://twitter.com/b40yd"
     d-facebook = ""
     e-linkedin = ""
     f-google = ""
-    g-github = "https://github.com/7ym0n"
+    g-github = "https://github.com/b40yd"
     h-weibo = ""
     i-zhihu = ""
     j-douban = ""
     k-pocket = ""
     l-tumblr = ""
     m-instagram = ""
-    n-gitlab = "https://gitlab.com/7ym0n"
+    n-gitlab = "https://gitlab.com/b40yd"
     o-bilibili = ""
 
 # See https://gohugo.io/about/hugo-and-gdpr/
