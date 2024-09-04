@@ -29,6 +29,6 @@ HivisionIDPhoto 可以做到：
 
 参考官方项目部署教程文档。
 
-体验地址：https://swanhub.co/ZeYiLin/HivisionIDPhotos/demo
+[体验地址](https://swanhub.co/ZeYiLin/HivisionIDPhotos/demo)
 
-GitHub：https://github.com/Zeyi-Lin/HivisionIDPhotos
+[GitHub](https://github.com/Zeyi-Lin/HivisionIDPhotos)
