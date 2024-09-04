@@ -44,7 +44,7 @@ author: "7ym0n"
 
 ### 安装和使用示例
 
-![](rich-2.png)
+![](/develop/rich-2.png)
 
 安装 Rich 库非常简单，可以通过 pip 安装：
 
