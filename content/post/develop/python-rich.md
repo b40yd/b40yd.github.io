@@ -1,13 +1,11 @@
 ---
-title: "Python Rich"
+title: "如何使用 Python rich 库让你的终端输出更加丰富多彩"
 date: 2024-09-04T13:31:14+08:00
 tags: ["Python", "rich"]
 categories: ["Python", "rich"]
 draft: false
 author: "7ym0n"
 ---
-
-# 如何使用 Python rich 库让你的终端输出更加丰富多彩
 
 ## 引言
 
