@@ -24,7 +24,9 @@ author: "b40yd"
 pgvector镜像配置和Postgres一致，我们需要设置以下几个参数：
 
 映射数据库端口：-p 5432:5432；
+
 设置数据库口令：-e POSTGRES_PASSWORD=password；
+
 指定数据库：-e POSTGRES_DB=demo；
 
 用如下命令启动数据库：
@@ -78,7 +80,7 @@ from pgvector.psycopg2 import register_vector
 
 PG_DB = 'demo'
 PG_USER = 'postgres'
-PG_PASSWORD = 'meiyoumima'
+PG_PASSWORD = 'postgres'
 PG_HOST = '127.0.0.1'
 PG_PORT = 5432
 
@@ -197,7 +199,7 @@ from openai import OpenAI
 
 PG_DB = 'demo'
 PG_USER = 'postgres'
-PG_PASSWORD = 'meiyoumima'
+PG_PASSWORD = 'postgres'
 PG_HOST = '127.0.0.1'
 PG_PORT = 5432
 
