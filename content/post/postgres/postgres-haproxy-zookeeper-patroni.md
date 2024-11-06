@@ -56,7 +56,7 @@ deb-src https://mirrors.aliyun.com/debian/ bookworm-backports main non-free non-
 其他PG节点的patroni.yml需要相应修改下面3个参数
 
 - name
-  node0~node1分别设置postgresql0~postgresql1
+  node0`~`node1分别设置postgresql0`~`postgresql1
 - restapi.connect_address
   根据各自节点IP设置
 - postgresql.connect_address
