@@ -13,23 +13,25 @@ PostgreSQL是一款功能，性能，可靠性都是不输于商业数据库的�
 本文介绍基于Patroni等开源组件搭建PostgreSQL高可用的部署方法。
 
 ## Patroni特性介绍
-    - 支持自动failover和按需switchover
-    - 支持一个和多个备节点
-    - 支持级联复制
-    - 支持同步复制，异步复制
-    - 支持同步复制下备库故障时自动降级为异步复制（功效类似于MySQL的半同步，但是更加智能）
-    - 支持控制指定节点是否参与选主，是否参与负载均衡以及是否可以成为同步备机
-    - 支持通过pg_rewind自动修复旧主
-    - 支持多种方式初始化集群和重建备机，包括pg_basebackup和支持wal_e，pgBackRest，barman等备份工具的自定义脚本
-    - 支持自定义外部callback脚本
-    - 支持REST API
-    - 支持通过watchdog防止脑裂
-    - 支持k8s，docker等容器化环境部署
-    - 支持多种常见DCS(Distributed Configuration Store)存储元数据，包括etcd，ZooKeeper，Consul，Kubernetes
+
+- 支持自动failover和按需switchover
+- 支持一个和多个备节点
+- 支持级联复制
+- 支持同步复制，异步复制
+- 支持同步复制下备库故障时自动降级为异步复制（功效类似于MySQL的半同步，但是更加智能）
+- 支持控制指定节点是否参与选主，是否参与负载均衡以及是否可以成为同步备机
+- 支持通过pg_rewind自动修复旧主
+- 支持多种方式初始化集群和重建备机，包括pg_basebackup和支持wal_e，pgBackRest，barman等备份工具的自定义脚本
+- 支持自定义外部callback脚本
+- 支持REST API
+- 支持通过watchdog防止脑裂
+- 支持k8s，docker等容器化环境部署
+- 支持多种常见DCS(Distributed Configuration Store)存储元数据，包括etcd，ZooKeeper，Consul，Kubernetes
 
 ## 环境
 
 用到的工具软件。
+
     - Docker
     - Docker-Compose
     - PostgreSQL
