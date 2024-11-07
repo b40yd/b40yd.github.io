@@ -294,6 +294,8 @@ services:
 
 ```
 
+查看[完整代码](https://github.com/b40yd/patroni-zookeeper-haproxy-postgres-docker)
+
 ## 开源工具对比
 在 PostgreSQL 高可用性（HA）解决方案中，PAF（PostgreSQL Automatic Failover）、repmgr 和 Patroni 是三个常见的工具。每个工具都有其独特的功能和特性，适用于不同的使用场景。以下是对这三款工具的详细对比介绍：
 
