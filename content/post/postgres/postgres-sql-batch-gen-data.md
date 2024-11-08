@@ -1,7 +1,7 @@
 ---
 title: "PostgreSQL中批量生成测试数据"
 date: 2024-11-08T13:44:10+08:00
-tags: ["postgres", "pgcrypto", "generate_series", "]
+tags: ["postgres", "pgcrypto", "generate_series", "random"]
 categories: ["postgres", "pgcrypto", "generate_series", "random"]
 draft: false
 author: "b40yd"
