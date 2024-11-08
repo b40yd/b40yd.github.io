@@ -82,8 +82,6 @@ SELECT random_string(10);
 
 - `random_char` 函数从给定的字符集合 `chars` 中随机选择一个字符。它使用 `substr` 函数从 `chars` 中提取一个随机位置的字符。
 - `random_string` 函数使用 `string_agg` 函数将多个随机字符连接成一个指定长度的字符串。`generate_series(1, length)` 用于生成指定数量的随机字符。
-- `possible_chars` 是一个包含所有可能字符的字符串，包括字母、数字和特定符号。
-
 
 以下是一个实现此功能的示例：
 
