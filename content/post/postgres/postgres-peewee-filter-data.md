@@ -136,7 +136,7 @@ from
     lateral jsonb_array_elements (q.kinds) as kind_obj
 where
     (jsonb_array_length(q.kinds) > 1)
-    and kind_obj->>'kind' != 'restful'
+    and kind_obj->>'kind' != 'default'
 order by
     count desc
 ```
@@ -192,7 +192,7 @@ with "aggregated_data" as (
     jsonb_array_elements("aggregated_data"."kinds") as "kind_obj"
     where
     ((jsonb_array_length("aggregated_data"."kinds") > 1)
-        and (kind_obj->>'kind' != 'restful'))))
+        and (kind_obj->>'kind' != 'default'))))
 select
 "t3"."order_id",
 "t3"."kind"
@@ -245,7 +245,7 @@ from
     "orders" as "t1"
 where
     ((("t1"."kind" != '')
-        and ("t1"."kind" != 'restful'))
+        and ("t1"."kind" != 'default'))
         and ("t1"."timestamp" between date_trunc('hour',
         NOW()-(interval '7 days')) and NOW()))
 group by
@@ -288,7 +288,7 @@ left join (
         "orders" as "t1"
     where
         ((("t1"."kind" != '')
-            and ("t1"."kind" != 'restful'))
+            and ("t1"."kind" != 'default'))
             and ("t1"."timestamp" between date_trunc('hour',
             NOW()-(interval '7 days')) and NOW()))
     group by
@@ -409,19 +409,19 @@ def get_kind_by_priority(model, start, end):
         (model.kind != '')
     ).alias('query'), model, start, end)
 
-    kind_mode_filter_restful = get_where_by_timestamp(query.where(
+    kind_mode_filter_default = get_where_by_timestamp(query.where(
                                                             (model.kind != '') & 
-                                                            (model.kind != 'restful')), 
+                                                            (model.kind != 'default')), 
                                                         model, 
                                                         start, 
                                                         end).alias('subquery')
     final_query = model.select(kind_mode.c.order_id, 
-                                fn.coalesce(kind_mode_filter_restful.c.kind, 
+                                fn.coalesce(kind_mode_filter_default.c.kind, 
                                             kind_mode.c.kind).alias('kind')
                         ).from_(
                             kind_mode
-                        ).join(kind_mode_filter_restful, join_type='LEFT JOIN', 
-                                on=(kind_mode_filter_restful.c.order_id == kind_mode.c.order_id))
+                        ).join(kind_mode_filter_default, join_type='LEFT JOIN', 
+                                on=(kind_mode_filter_default.c.order_id == kind_mode.c.order_id))
     
     
     return final_query
