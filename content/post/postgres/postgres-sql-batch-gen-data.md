@@ -115,7 +115,7 @@ CREATE TABLE public.relate_servers (
 	CONSTRAINT relate_servers_pkey PRIMARY KEY (id)
 );
 CREATE INDEX relate_servers_servers ON public.relate_servers USING gin (servers);
-``
+```
 
 插入测试数据：
 
