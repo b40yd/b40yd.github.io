@@ -1,7 +1,7 @@
 +++
 title = "Postgres事务死锁介绍及建议"
 date = 2024-12-13
-lastmod = 2024-12-13T18:45:01+08:00
+lastmod = 2024-12-13T18:47:16+08:00
 tags = ["postgres", "lock", "transactions"]
 categories = ["postgres", "lock", "transactions"]
 draft = false
@@ -206,14 +206,14 @@ def demo(now, ids):
     infos = User.select(User.id,
                         User.updated_time,
                         User.created_time).where(User.id.in_(ids))
-    api_objs = []
+    objs = []
     for info in infos:
         info.updated_time = datetime.fromtimestamp(now)
         info.updated_time = datetime.fromtimestamp(now)
         # info.save()
-        api_objs.append(info)
+        objs.append(info)
 
-    User.bulk_update(api_objs, [User.updated_time], batch_size=10000)
+    User.bulk_update(objs, [User.updated_time], batch_size=10000)
 
 
 def start(ids):
@@ -265,15 +265,15 @@ def demo(now, ids):
     infos = User.select(User.id,
                         User.updated_time,
                         User.created_time).where(User.id.in_(ids)).for_update()
-    api_objs = []
+    objs = []
     for info in infos:
         info.updated_time = datetime.fromtimestamp(now)
         info.updated_time = datetime.fromtimestamp(now)
         # info.save()
-        api_objs.append(info)
+        objs.append(info)
 
     # 移除batch_size， 需要提前处理分组
-    User.bulk_update(api_objs, [User.updated_time])
+    User.bulk_update(objs, [User.updated_time])
 
 
 def start(ids):

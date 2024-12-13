@@ -202,14 +202,14 @@ def demo(now, ids):
     infos = User.select(User.id, 
                         User.updated_time, 
                         User.created_time).where(User.id.in_(ids))
-    api_objs = []
+    objs = []
     for info in infos:
         info.updated_time = datetime.fromtimestamp(now)
         info.updated_time = datetime.fromtimestamp(now) 
         # info.save()
-        api_objs.append(info)
+        objs.append(info)
     
-    User.bulk_update(api_objs, [User.updated_time], batch_size=10000)
+    User.bulk_update(objs, [User.updated_time], batch_size=10000)
 
 
 def start(ids):
@@ -259,15 +259,15 @@ def demo(now, ids):
     infos = User.select(User.id, 
                         User.updated_time, 
                         User.created_time).where(User.id.in_(ids)).for_update()
-    api_objs = []
+    objs = []
     for info in infos:
         info.updated_time = datetime.fromtimestamp(now)
         info.updated_time = datetime.fromtimestamp(now) 
         # info.save()
-        api_objs.append(info)
+        objs.append(info)
     
     # 移除batch_size， 需要提前处理分组
-    User.bulk_update(api_objs, [User.updated_time])
+    User.bulk_update(objs, [User.updated_time])
 
 
 def start(ids):
