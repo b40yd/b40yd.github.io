@@ -1,6 +1,6 @@
 #+title: Postgres事务死锁介绍及建议
 #+AUTHOR:
-#+DATE: 2021-04-18
+#+DATE: 2024-12-13
 #+HUGO_CUSTOM_FRONT_MATTER: :author "B40yd"
 #+HUGO_BASE_DIR: ../
 #+HUGO_SECTION: post/
@@ -95,7 +95,7 @@
 
 ** 测试死锁
 
-数据表创建与数据生成， 参考:[postgres批量生成数据](https://www.scanbuf.net/post/postgres/postgres-sql-batch-gen-data/)
+数据表创建与数据生成， 参考:[[https://www.scanbuf.net/post/postgres/postgres-sql-batch-gen-data/][postgres批量生成数据]]
 
 #+begin_src sql
 CREATE TABLE public.users (

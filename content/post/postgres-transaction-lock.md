@@ -1,7 +1,7 @@
 +++
 title = "Postgres事务死锁介绍及建议"
-date = 2021-04-18
-lastmod = 2024-12-13T18:39:10+08:00
+date = 2024-12-13
+lastmod = 2024-12-13T18:45:01+08:00
 tags = ["postgres", "lock", "transactions"]
 categories = ["postgres", "lock", "transactions"]
 draft = false
@@ -95,7 +95,7 @@ author = "B40yd"
 
 ## 测试死锁 {#测试死锁}
 
-数据表创建与数据生成， 参考:[postgres批量生成数据](<https://www.scanbuf.net/post/postgres/postgres-sql-batch-gen-data/>)
+数据表创建与数据生成， 参考:[postgres批量生成数据](https://www.scanbuf.net/post/postgres/postgres-sql-batch-gen-data/)
 
 ```sql
 CREATE TABLE public.users (
