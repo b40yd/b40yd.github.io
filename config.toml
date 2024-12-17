@@ -19,7 +19,8 @@ paginate = 10                                              # 首页每页显示�
 copyright = "B40yd"            # default: author.name ↓        # 默认为下面配置的author.name ↓
 
 [[Config.Services.Disqus]]
-Shortname = ""      # disqus_shortname
+Shortname = "b40yd"    # disqus_shortname
+
 [[Config.Services.GoogleAnalytics]]
 ID = "UA-39903197-1"      # UA-XXXXXXXX-X
 
@@ -151,9 +152,9 @@ ID = "UA-39903197-1"      # UA-XXXXXXXX-X
 
   [params.gitalk]           # Gitalk is a comment system based on GitHub issues. see https://github.com/gitalk/gitalk
     owner = "B40yd"              # Your GitHub ID
-    repo = "b40yd.github.io"               # The repo to store comments
-    clientId = "73733d18565825f17b08"           # Your client ID
-    clientSecret = "c58112d2e73ddb5486dea04d3a9867ffdb70edc9"       # Your client secret
+    repo = ""               # The repo to store comments
+    clientId = ""           # Your client ID
+    clientSecret = ""       # Your client secret
 
   # Valine.
   # You can get your appid and appkey from https://leancloud.cn
