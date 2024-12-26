@@ -1,8 +1,7 @@
 +++
 title = "Python Progress Bar"
-author = ["B40yd"]
 date = 2024-12-26
-lastmod = 2024-12-26T17:44:01+08:00
+lastmod = 2024-12-26T17:48:05+08:00
 tags = ["python", "progress", "bar"]
 categories = ["python", "progress", "bar"]
 draft = false

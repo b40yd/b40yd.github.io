@@ -1,5 +1,5 @@
 #+title: Python Progress Bar
-#+AUTHOR: B40yd
+#+AUTHOR: 
 #+DATE: 2024-12-26
 #+HUGO_CUSTOM_FRONT_MATTER: :author "B40yd"
 #+HUGO_BASE_DIR: ../
