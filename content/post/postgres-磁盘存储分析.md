@@ -1,0 +1,282 @@
++++
+title = "postgres磁盘空间分析"
+date = 2024-12-26
+lastmod = 2024-12-26T12:38:07+08:00
+tags = ["postgres", "page_header", "heap_page_items", "VACUUM", "view"]
+categories = ["postgres", "page_header", "heap_page_items", "VACUUM", "view"]
+draft = false
+author = "B40yd"
++++
+
+## Postgres内部分析 {#postgres内部分析}
+
+创建一个带有索引的表。
+
+```sql
+CREATE TABLE asset(
+    id integer,
+    s char(100)
+)
+CREATE INDEX asset_s ON asset(s);
+```
+
+
+## 页与元组 {#页与元组}
+
+`page_header` 函数返回以下项：
+
+-   lsn: 记录日志序列号（Log Sequence Number），表示该页面的最后一次修改位置。
+-   checksum: 页面的校验和，用于数据完整性检查。
+-   flags: 页面的标志位，表示页面的状态（例如是否为空闲）。
+-   lower: 页面的元数据区域的下边界。
+-   upper: 页面的元数据区域的上边界。
+-   special: 特殊区域的起始位置，通常用于索引页。
+-   pagesize: 页面大小，通常为 8KB。
+-   version: 页面的版本号。
+-   `prune_xid`: 需要修剪的事务 ID。
+
+`heap_page_items` 函数返回以下项：
+
+-   lp: 项目指针（Line Pointer）编号，表示项目在页面中的位置。
+-   `lp_off`: 项目在页面中的偏移量。
+-   `lp_flags`: 项目的标志位，表示项目的状态（例如是否已删除）。
+-   `lp_len`: 项目的长度。
+-   `t_xmin`: 项目创建时的事务 ID。
+-   `t_xmax`: 项目删除时的事务 ID。
+-   `t_field3`: 其他事务相关信息。
+-   `t_ctid`: 项目的 CTID（Current Transaction ID），表示项目的物理位置。
+-   `t_infomask2`: 项目的信息掩码，包含项目的额外状态信息。
+-   `t_infomask`: 项目的信息掩码，包含项目的额外状态信息。
+-   `t_hoff`: 项目头部的偏移量。
+-   `t_bits`: 项目的位图信息，用于表示 NULL 值和 TOAST 数据。
+-   `t_oid`: 项目的对象 ID（如果有）。
+
+<!--listend-->
+
+```sql
+-------使用pageinspect扩展查看页头----------
+CREATE EXTENSION pageinspect;
+
+SELECT * FROM page_header(get_raw_page('asset',0));
+
+SELECT * FROM heap_page_items(get_raw_page('asset', 0));
+
+begin;
+------ 查看当前事务id
+SELECT pg_current_xact_id();
+commit;
+
+------- lp 指针被转换为元组 ID 的标准格式：页号，指针号。
+------- lp_flags 的状态被详细展示出来。此处它被设为 normal，意味着确实指向一个元组。
+------- 在所有信息位中，到目前为止我们只挑选出了两对。xmin_committed 和 xmin_aborted 表示 xmin 对应的事务已提交或者已中止。xmax_committed 和 xmax_aborted 提供了关于 xmax 事务的类似信息。
+SELECT '(0,'||lp||')' AS ctid,
+     CASE lp_flags
+       WHEN 0 THEN 'unused'
+       WHEN 1 THEN 'normal'
+       WHEN 2 THEN 'redirect to '||lp_off
+       WHEN 3 THEN 'dead'
+     END AS state,
+     t_xmin as xmin,
+     t_xmax as xmax,
+     (t_infomask & 256) > 0 AS xmin_committed,
+     (t_infomask & 512) > 0 AS xmin_aborted,
+     (t_infomask & 1024) > 0 AS xmax_committed,
+     (t_infomask & 2048) > 0 AS xmax_aborted
+FROM heap_page_items(get_raw_page('asset',0));
+
+-------- 创建一个函数，方便多次使用 -----
+CREATE OR REPLACE FUNCTION heap_page(relname text, pageno integer)
+RETURNS TABLE(ctid tid, state text, xmin text, xmax text)
+AS $$
+SELECT (pageno,lp)::text::tid AS ctid,
+     CASE lp_flags
+       WHEN 0 THEN 'unused'
+       WHEN 1 THEN 'normal'
+       WHEN 2 THEN 'redirect to '||lp_off
+       WHEN 3 THEN 'dead'
+     END AS state,
+     t_xmin || CASE
+       WHEN (t_infomask & 256) > 0 THEN ' c'
+       WHEN (t_infomask & 512) > 0 THEN ' a'
+       ELSE ''
+     END AS xmin,
+     t_xmax || CASE
+       WHEN (t_infomask & 1024) > 0 THEN ' c'
+       WHEN (t_infomask & 2048) > 0 THEN ' a'
+       ELSE ''
+     END AS xmax
+FROM heap_page_items(get_raw_page(relname,pageno))
+ORDER BY lp;
+$$ LANGUAGE sql;
+
+SELECT * FROM heap_page('asset',0);
+
+------ 重定义heap_page函数
+DROP FUNCTION heap_page(text,integer);
+
+CREATE OR REPLACE FUNCTION heap_page(relname text, pageno integer)
+RETURNS TABLE(
+  ctid tid, state text,
+  xmin text, xmax text,
+  hhu text, hot text, t_ctid tid
+) AS $$
+SELECT (pageno,lp)::text::tid AS ctid,
+       CASE lp_flags
+         WHEN 0 THEN 'unused'
+         WHEN 1 THEN 'normal'
+         WHEN 2 THEN 'redirect to '||lp_off
+         WHEN 3 THEN 'dead'
+       END AS state,
+       t_xmin || CASE
+         WHEN (t_infomask & 256) > 0 THEN ' c'
+         WHEN (t_infomask & 512) > 0 THEN ' a'
+         ELSE ''
+       END AS xmin,
+       t_xmax || CASE
+         WHEN (t_infomask & 1024) > 0 THEN ' c'
+         WHEN (t_infomask & 2048) > 0 THEN ' a'
+         ELSE ''
+       END AS xmax,
+       CASE WHEN (t_infomask2 & 16384) > 0 THEN 't' END AS hhu,
+       CASE WHEN (t_infomask2 & 32768) > 0 THEN 't' END AS hot,
+       t_ctid
+FROM heap_page_items(get_raw_page(relname,pageno))
+ORDER BY lp;
+$$ LANGUAGE sql;
+
+
+-------- 使用 pageinspect 显示页面中的所有索引条目 (B 树索引页将它们存储为一个扁平列表)
+CREATE OR REPLACE FUNCTION index_page(relname text, pageno integer)
+RETURNS TABLE(itemoffset smallint, htid tid)
+AS $$
+SELECT itemoffset,
+       htid -- ctid before v.13
+FROM bt_page_items(relname,pageno);
+$$ LANGUAGE sql;
+
+SELECT * FROM index_page('asset_timestamp',1);
+
+
+--------- 扩展索引页面函数
+DROP FUNCTION index_page(text, integer);
+CREATE OR REPLACE FUNCTION index_page(relname text, pageno integer)
+RETURNS TABLE(itemoffset smallint, htid tid, dead boolean)
+AS $$
+SELECT itemoffset,
+       htid,
+       dead -- starting from v.13
+FROM bt_page_items(relname,pageno);
+$$ LANGUAGE sql;
+```
+
+
+## 查看快照 {#查看快照}
+
+```sql
+SELECT pg_current_snapshot();
+--------- pg_export_snapshot 函数返回一个快照 ID
+SELECT pg_export_snapshot();
+```
+
+
+## 查看视界 {#查看视界}
+
+```sql
+--------- pg_stat_activity 表中看到它们自己的视界
+SELECT backend_xmin FROM pg_stat_activity WHERE pid = pg_backend_pid();
+
+--------- 使用 pg_visibility 扩展来检查可见性映射
+CREATE EXTENSION pg_visibility;
+
+SELECT all_visible FROM pg_visibility_map('asset',0);
+--------- 页头中的属性也进行了更新，表明其所有元组在所有快照中都是可见的
+SELECT flags & 4 > 0 AS all_visible FROM page_header(get_raw_page('asset',0));
+
+```
+
+
+## VACUUM {#vacuum}
+
+```sql
+--------- 调用 VACUUM 时使用 verbose 子句来观察发生了什么
+---- VACUUM 的输出显示了以下信息：
+---- VACUUM 没有检测到可以移除的元组 (0 REMOVABLE)。
+---- 两个元组不能被移除 (2 NONREMOVABLE)。
+---- 其中一个不可移除的元组状态是 dead (1 DEAD)，其他的正在使用。
+---- VACUUM 当前所遵循的视界 (OLDEST XMIN) 是活跃事务的视界。
+VACUUM VERBOSE asset_list_summary_day;
+
+---------- 创建两个视图以显示当前哪些表需要被清理和分析
+CREATE OR REPLACE FUNCTION p(param text, c pg_class) RETURNS float
+AS $$
+  SELECT coalesce(
+    -- use storage parameter if set
+    (SELECT option_value
+     FROM pg_options_to_table(c.reloptions)
+     WHERE option_name = CASE
+             -- for TOAST tables the parameter name is different
+             WHEN c.relkind = 't' THEN 'toast.' ELSE ''
+            END || param
+    ),
+    -- else take the configuration parameter value
+    current_setting(param)
+  )::float;
+$$ LANGUAGE sql;
+
+CREATE OR REPLACE VIEW need_vacuum AS
+WITH c AS (
+  SELECT c.oid,
+    greatest(c.reltuples, 0) reltuples,
+    p('autovacuum_vacuum_threshold', c) threshold,
+    p('autovacuum_vacuum_scale_factor', c) scale_factor,
+    p('autovacuum_vacuum_insert_threshold', c) ins_threshold,
+    p('autovacuum_vacuum_insert_scale_factor', c) ins_scale_factor
+  FROM pg_class c
+WHERE c.relkind IN ('r','m','t')
+)
+SELECT st.schemaname || '.' || st.relname AS tablename,
+  st.n_dead_tup AS dead_tup,
+  c.threshold + c.scale_factor * c.reltuples AS max_dead_tup,
+  st.n_ins_since_vacuum AS ins_tup,
+  c.ins_threshold + c.ins_scale_factor * c.reltuples AS max_ins_tup,
+  st.last_autovacuum
+FROM pg_stat_all_tables st
+  JOIN c ON c.oid = st.relid;
+
+CREATE OR REPLACE VIEW need_analyze AS
+WITH c AS (
+  SELECT c.oid,
+    greatest(c.reltuples, 0) reltuples,
+    p('autovacuum_analyze_threshold', c) threshold,
+    p('autovacuum_analyze_scale_factor', c) scale_factor
+  FROM pg_class c
+  WHERE c.relkind IN ('r','m')
+)
+SELECT st.schemaname || '.' || st.relname AS tablename,
+  st.n_mod_since_analyze AS mod_tup,
+  c.threshold + c.scale_factor * c.reltuples AS max_mod_tup,
+  st.last_autoanalyze
+FROM pg_stat_all_tables st
+  JOIN c ON c.oid = st.relid;
+
+
+--------- VACUUM 运行时多次查询 pg_stat_progress_vacuum 视图
+VACUUM FULL verbose asset;
+---- 该视图主要显示了：
+---- phase — 当前清理阶段的名称 (我描述了主要的几个阶段，但实际上还有更多 19)
+---- heap_blks_total — 表中的页面总数
+---- heap_blks_scanned — 已扫描的页面数量
+---- heap_blks_vacuumed —已清理的页面数量
+---- index_vacuum_count — 索引扫描的次数
+SELECT * FROM pg_stat_progress_vacuum
+```
+
+
+## 重新加载配置文件 {#重新加载配置文件}
+
+```sql
+
+---- 重新加载配置文件
+SELECT pg_reload_conf();
+
+```
