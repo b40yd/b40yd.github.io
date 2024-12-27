@@ -1,7 +1,7 @@
 +++
 title = "postgres磁盘空间分析"
 date = 2024-12-26
-lastmod = 2024-12-26T12:38:07+08:00
+lastmod = 2024-12-27T14:30:48+08:00
 tags = ["postgres", "page_header", "heap_page_items", "VACUUM", "view"]
 categories = ["postgres", "page_header", "heap_page_items", "VACUUM", "view"]
 draft = false
@@ -144,6 +144,40 @@ FROM heap_page_items(get_raw_page(relname,pageno))
 ORDER BY lp;
 $$ LANGUAGE sql;
 
+---- 复杂查询，多次使用，定义为函数查询
+CREATE OR REPLACE FUNCTION heap_page(
+  relname text, pageno_from integer, pageno_to integer
+)
+RETURNS TABLE(
+  ctid tid, state text,
+  xmin text, xmin_age integer, xmax text
+) AS $$
+SELECT (pageno,lp)::text::tid AS ctid,
+     CASE lp_flags
+       WHEN 0 THEN 'unused'
+       WHEN 1 THEN 'normal'
+       WHEN 2 THEN 'redirect to '||lp_off
+       WHEN 3 THEN 'dead'
+     END AS state,
+     t_xmin || CASE
+       WHEN (t_infomask & 256+512) = 256+512 THEN ' f'
+       WHEN (t_infomask & 256) > 0 THEN ' c'
+       WHEN (t_infomask & 512) > 0 THEN ' a'
+       ELSE ''
+     END AS xmin,
+     age(t_xmin) AS xmin_age,
+     t_xmax || CASE
+       WHEN (t_infomask & 1024) > 0 THEN ' c'
+       WHEN (t_infomask & 2048) > 0 THEN ' a'
+       ELSE ''
+     END AS xmax
+FROM generate_series(pageno_from, pageno_to) p(pageno),
+     heap_page_items(get_raw_page(relname, pageno))
+ORDER BY pageno, lp;
+$$ LANGUAGE sql;
+
+SELECT * FROM heap_page('asset',0,0) LIMIT 5;
+
 
 -------- 使用 pageinspect 显示页面中的所有索引条目 (B 树索引页将它们存储为一个扁平列表)
 CREATE OR REPLACE FUNCTION index_page(relname text, pageno integer)
@@ -280,3 +314,171 @@ SELECT * FROM pg_stat_progress_vacuum
 SELECT pg_reload_conf();
 
 ```
+
+
+## 分析磁盘膨胀问题 {#分析磁盘膨胀问题}
+
+```sql
+----- 创建一张测试表
+CREATE TABLE vac(
+    id integer,
+    s char(100)
+)
+WITH (autovacuum_enabled = on);
+
+CREATE INDEX vac_s ON vac(s);
+
+```
+
+
+## 存储密度分析 {#存储密度分析}
+
+使用 `pgstattuple` 扩展来评估。
+
+```sql
+CREATE EXTENSION pgstattuple;
+SELECT * FROM pgstattuple('vac'); -- 分析数据密度
+```
+
+```sql
+SELECT * FROM pgstatindex('vac_s'); -- 分析索引
+```
+
+
+## 分析表和索引大小 {#分析表和索引大小}
+
+```sql
+----- 表及其索引的当前大小
+SELECT pg_size_pretty(pg_table_size('vac')) AS table_size,
+        pg_size_pretty(pg_indexes_size('vac')) AS index_size;
+```
+
+
+## 删除数据，磁盘并不会被回收 {#删除数据-磁盘并不会被回收}
+
+```sql
+----- 插入50w数据
+INSERT INTO vac(id,s)
+SELECT id, id::text FROM generate_series(1,50000) id;
+```
+
+执行前面的SQL，查看表存储密度。
+
+| table_len          | 70623232 |
+|--------------------|----------|
+| tuple_count        | 500000   |
+| tuple_len          | 64500000 |
+| tuple_percent      | 91.33    |
+| dead_tuple_count   | 0        |
+| dead_tuple_len     | 0        |
+| dead_tuple_percent | 0        |
+| free_space         | 381844   |
+| free_percent       | 0.54     |
+
+索引情况。
+
+| version            | 4         |
+|--------------------|-----------|
+| tree_level         | 3         |
+| index_size         | 114302976 |
+| root_block_no      | 2825      |
+| internal_pages     | 376       |
+| leaf_pages         | 13576     |
+| empty_pages        | 0         |
+| deleted_pages      | 0         |
+| avg_leaf_density   | 53.88     |
+| leaf_fragmentation | 10.59     |
+
+执行前面的SQL，查看表和索引大小。
+
+| table_size | index_size |
+|------------|------------|
+| 67 MB      | 109 MB     |
+
+执行删除语句。
+
+```sql
+----- 删除 90% 的行 共删除450000行
+DELETE FROM vac WHERE id % 10 != 0;
+---- 数据密度下降了大约 10 倍
+SELECT vac.tuple_percent, vac_s.avg_leaf_density
+FROM pgstattuple('vac') vac, pgstatindex('vac_s') vac_s;
+```
+
+| tuple_percent | avg_leaf_density |
+|---------------|------------------|
+| 9.13          | 6.71             |
+
+
+## 查看索引文件 {#查看索引文件}
+
+```sql
+---- 表和索引当前位于以下文件中
+SELECT pg_relation_filepath('vac') AS vac_filepath,
+        pg_relation_filepath('vac_s') AS vac_s_filepath;
+```
+
+| vac_filepath     | vac_s_filepath   |
+|------------------|------------------|
+| base/16384/19258 | base/16384/19259 |
+
+
+## VACUUM {#vacuum}
+
+```sql
+---- 完全清理
+VACUUM FULL vac;
+```
+
+查看数据存储密度，密度增加。
+
+| tuple_percent | avg_leaf_density |
+|---------------|------------------|
+| 91.23         | 91.08            |
+
+查看索引文件。
+
+| vac_filepath     | vac_s_filepath   |
+|------------------|------------------|
+| base/16384/19260 | base/16384/19263 |
+
+查看表和索引大小。
+
+| table_size | index_size |
+|------------|------------|
+| 6904 kB    | 6504 kB    |
+
+
+## 数据更新 {#数据更新}
+
+更新整张表，数据所占空间扩展至少一倍。
+
+```sql
+update vac set s = id::text
+```
+
+查看表大小。
+
+| pg_size_pretty |
+|----------------|
+| 14 MB          |
+|                |
+
+为了解决这种情况，你可以减少单个事务执行的更改数量，将它们分散到不同的时间点上；然后清理操作便可以移除过期的元组，并在现有页面中为新元组腾出一些空间。分批更新，使用 `FOR UPDATE SKIP LOCKED` 。
+
+一共50000条数据，使用分页的方式更新。
+
+```sql
+WITH batch AS (
+    SELECT id FROM vac WHERE NOT processed offset 0 LIMIT 10000
+    FOR UPDATE SKIP LOCKED
+)
+UPDATE vac SET s = id::text
+WHERE id IN (SELECT id FROM batch);
+```
+
+查看表和索引大小。
+
+| table_size | index_size |
+|------------|------------|
+| 11 MB      | 10088 kB   |
