@@ -1,7 +1,7 @@
 +++
 title = "Python Progress Bar"
 date = 2024-12-26
-lastmod = 2024-12-27T09:41:22+08:00
+lastmod = 2024-12-27T09:44:49+08:00
 tags = ["python", "progress", "bar"]
 categories = ["python", "progress", "bar"]
 draft = false
@@ -91,4 +91,10 @@ if __name__ == "__main__":
         for n in range(0, 100000000, 1):
             progress.update(1)
             # time.sleep(1)
+```
+
+进度条效果：
+
+```nil
+84.4% [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓--------] 84401905/100000000 - 1743830.63 items/s - ETA: 8.94s - Total time: 48.40s
 ```

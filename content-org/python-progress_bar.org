@@ -95,7 +95,7 @@ if __name__ == "__main__":
             # time.sleep(1)
 #+end_src
 
-#+RESULTS:
+进度条效果：
 #+begin_src 
 84.4% [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓--------] 84401905/100000000 - 1743830.63 items/s - ETA: 8.94s - Total time: 48.40s
 #+end_src 
