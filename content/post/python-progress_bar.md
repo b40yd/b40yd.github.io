@@ -1,7 +1,7 @@
 +++
 title = "Python Progress Bar"
 date = 2024-12-26
-lastmod = 2025-01-03T14:21:23+08:00
+lastmod = 2025-01-03T14:44:02+08:00
 tags = ["python", "progress", "bar"]
 categories = ["python", "progress", "bar"]
 draft = false
@@ -31,9 +31,11 @@ author = "B40yd"
 
 ```python
 #encoding: utf-8
-import sys
+from threading import Lock
+import random
+import math
 import time
-from threading import Thread, Lock
+import sys
 
 class ProgressBar(object):
     def __init__(self, total, length=40, min_update_interval=0.1):
@@ -48,9 +50,6 @@ class ProgressBar(object):
     def __enter__(self):
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.finish()
-
     def update(self, advance=1):
         with self.lock:
             self.current += advance
@@ -58,6 +57,10 @@ class ProgressBar(object):
             if current_time - self.last_update_time >= self.min_update_interval:
                 self._render()
                 self.last_update_time = current_time
+            if self.current == self.total:
+                self._render()
+                sys.stdout.write("\n")
+                sys.stdout.flush()
 
     def _render(self):
         elapsed_time = time.time() - self.start_time
@@ -78,17 +81,19 @@ class ProgressBar(object):
             progress_percent, bar, self.current, self.total, speed, remaining_time, total_time))
         sys.stdout.flush()
 
-    def finish(self):
-        with self.lock:
-            self._render()
-            print("\n")
+def test_case1():
+    page = int(math.ceil(9030000/10000))
+    read_progres = ProgressBar(page)
+    for n in range(0, page):
+        read_progres.update(1)
 
-# 使用示例
-if __name__ == "__main__":
+def test_case2():
     with ProgressBar(100000000, length=50) as progress:
         for n in range(0, 100000000, 1):
             progress.update(1)
-
+if __name__ == "__main__":
+    test_case1()
+    test_case2()
 ```
 
 进度条效果：
