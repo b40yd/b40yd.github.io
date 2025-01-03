@@ -82,8 +82,17 @@ class ProgressBar(object):
         remaining_time = (self.total - self.current) / speed if speed > 0 else 0
         total_time = time.time() - self.start_time
 
-        sys.stdout.write("\r{0}% [{1}] {2}/{3} - {4:.2f} items/s - ETA: {5:.2f}s - Total time: {6:.2f}s".format(
-            progress_percent, bar, self.current, self.total, speed, remaining_time, total_time))
+        show_extend = [
+            "{:.2f} items/s".format(speed),
+            "ETA: {:.2f}s".format(remaining_time),
+            "Total time: {:.2f}s".format(total_time),
+        ]
+        out_template = "\r{{0:4.2f}}% [{{1}}] {{2:>{0}}}/{{3:<{0}}} {{4}}".format(len(repr(self.total)))
+        output = out_template.format(
+            progress_percent, bar, self.current, self.total, " - ".join(show_extend))
+
+        # Ensure the length of the output is consistent to avoid flickering
+        sys.stdout.write(output)
         sys.stdout.flush()
 
 def test_case1():
