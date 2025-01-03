@@ -63,7 +63,7 @@ class ProgressBar(object):
 
     def _render(self):
         elapsed_time = time.time() - self.start_time
-        progress = self.current / self.total
+        progress = self.current / float(self.total)
         block = int(round(self.length * progress))
         progress_percent = round(progress * 100, 2)
         if block > self.length:
@@ -71,7 +71,7 @@ class ProgressBar(object):
             bar = "▓" * block
         else:
             bar = "▓" * block + "-" * (self.length - block)
-        
+
         speed = self.current / elapsed_time if elapsed_time > 0 else 0
         remaining_time = (self.total - self.current) / speed if speed > 0 else 0
         total_time = time.time() - self.start_time
@@ -85,14 +85,12 @@ class ProgressBar(object):
             self._render()
             print("\n")
 
-
 # 使用示例
 if __name__ == "__main__":
-
     with ProgressBar(100000000, length=50) as progress:
         for n in range(0, 100000000, 1):
             progress.update(1)
-            # time.sleep(1)
+
 #+end_src
 
 进度条效果：

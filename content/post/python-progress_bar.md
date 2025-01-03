@@ -1,7 +1,7 @@
 +++
 title = "Python Progress Bar"
 date = 2024-12-26
-lastmod = 2024-12-27T09:44:49+08:00
+lastmod = 2025-01-03T14:21:23+08:00
 tags = ["python", "progress", "bar"]
 categories = ["python", "progress", "bar"]
 draft = false
@@ -61,7 +61,7 @@ class ProgressBar(object):
 
     def _render(self):
         elapsed_time = time.time() - self.start_time
-        progress = self.current / self.total
+        progress = self.current / float(self.total)
         block = int(round(self.length * progress))
         progress_percent = round(progress * 100, 2)
         if block > self.length:
@@ -83,14 +83,12 @@ class ProgressBar(object):
             self._render()
             print("\n")
 
-
 # 使用示例
 if __name__ == "__main__":
-
     with ProgressBar(100000000, length=50) as progress:
         for n in range(0, 100000000, 1):
             progress.update(1)
-            # time.sleep(1)
+
 ```
 
 进度条效果：
