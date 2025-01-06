@@ -1,7 +1,7 @@
 +++
 title = "Python Progress Bar"
 date = 2024-12-26
-lastmod = 2025-01-03T15:23:30+08:00
+lastmod = 2025-01-06T15:06:26+08:00
 tags = ["python", "progress", "bar"]
 categories = ["python", "progress", "bar"]
 draft = false
@@ -51,7 +51,7 @@ class ProgressBar(object):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        pass
+        self._render()
 
     def update(self, advance=1):
         with self.lock:
@@ -70,11 +70,13 @@ class ProgressBar(object):
         progress = self.current / float(self.total)
         block = int(round(self.length * progress))
         progress_percent = round(progress * 100, 2)
-        if block > self.length:
+        color_code = "\033[91m"
+        if block >= self.length:
             block = self.length
-            bar = "▓" * block
+            bar = "━" * block
+            color_code = "\033[92m"
         else:
-            bar = "▓" * block + "-" * (self.length - block)
+            bar = "━" * block + "-" * (self.length - block)
 
         speed = self.current / elapsed_time if elapsed_time > 0 else 0
         remaining_time = (self.total - self.current) / speed if speed > 0 else 0
@@ -85,7 +87,7 @@ class ProgressBar(object):
             "ETA: {:.2f}s".format(remaining_time),
             "Total time: {:.2f}s".format(total_time),
         ]
-        out_template = "\r{{0:4.2f}}% [{{1}}] {{2:>{0}}}/{{3:<{0}}} {{4}}".format(len(repr(self.total)))
+        out_template = "\r{{0:4.2f}}% [{0}{{1}}\033[0m] {{2:>{1}}}/{{3:<{1}}} {{4}}".format(color_code, len(repr(self.total)))
         output = out_template.format(
             progress_percent, bar, self.current, self.total, " - ".join(show_extend))
 
