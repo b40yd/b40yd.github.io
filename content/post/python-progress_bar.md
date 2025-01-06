@@ -1,7 +1,7 @@
 +++
 title = "Python Progress Bar"
 date = 2024-12-26
-lastmod = 2025-01-06T15:06:26+08:00
+lastmod = 2025-01-06T15:09:17+08:00
 tags = ["python", "progress", "bar"]
 categories = ["python", "progress", "bar"]
 draft = false
@@ -51,7 +51,7 @@ class ProgressBar(object):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        self._render()
+        pass
 
     def update(self, advance=1):
         with self.lock:

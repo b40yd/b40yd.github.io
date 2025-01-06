@@ -53,7 +53,7 @@ class ProgressBar(object):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        self._render()
+        pass
 
     def update(self, advance=1):
         with self.lock:
