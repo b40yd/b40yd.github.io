@@ -1,7 +1,7 @@
 +++
 title = "How Use Pcre Regex"
 date = 2025-04-09
-lastmod = 2025-04-09T14:25:21+08:00
+lastmod = 2025-04-11T15:35:24+08:00
 tags = ["c/c++", "pcre"]
 categories = ["c/c++", "pcre"]
 draft = false
@@ -158,4 +158,5 @@ int main() {
     }
 
     return 0;
+}
 ```
