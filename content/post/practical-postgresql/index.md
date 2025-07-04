@@ -1,6 +1,6 @@
 +++
 title = "PostgreSQL 数据库实战指南"
-lastmod = 2025-07-04
+lastmod = 2025-07-04T01:00:00+08:00
 tags = ["PostgreSQL", "practical", "book"]
 categories = ["PostgreSQL", "practical", "book"]
 draft = false
