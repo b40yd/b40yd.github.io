@@ -48,10 +48,10 @@ PostgreSQL 不再只是一个传统的关系型数据库。随着插件生态的
 - [实战：使用窗口函数分析销售数据趋势](/post/practical-postgresql/2/window-function)
 
 ### 第3章 事务控制与并发机制
-- ACID 特性实现机制
-- 多版本并发控制（MVCC）原理
-- 锁机制与死锁检测
-- 实战：高并发下单系统事务设计
+- [ACID 特性实现机制](/post/practical-postgresql/3/acid)
+- [多版本并发控制（MVCC）原理](/post/practical-postgresql/3/mvcc)
+- [锁机制与死锁检测](/post/practical-postgresql/3/locked)
+- [实战：高并发下单系统事务设计](/post/practical-postgresql/3/transaction)
 
 ### 第4章 函数、触发器与过程语言
 - PL/pgSQL 编写存储过程
