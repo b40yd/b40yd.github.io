@@ -42,10 +42,10 @@ PostgreSQL 不再只是一个传统的关系型数据库。随着插件生态的
 - [实战：搭建本地开发环境并导入样例数据集](/post/practical-postgresql/1/local-dev-data-sample)
 
 ### 第2章 SQL 语法与高级查询
-- SELECT、JOIN、CTE、窗口函数详解
-- 索引类型（B-tree, Hash, GiST, SP-GiST, BRIN, Bloom）
-- 查询优化技巧与执行计划解读
-- 实战：使用窗口函数分析销售数据趋势
+- [SELECT、JOIN、CTE、窗口函数详解](/post/practical-postgresql/2/select-join-cte-function)
+- [索引类型（B-tree, Hash, GiST, SP-GiST, BRIN, Bloom）](/post/practical-postgresql/2/index-type)
+- [查询优化技巧与执行计划解读](/post/practical-postgresql/2/explain)
+- [实战：使用窗口函数分析销售数据趋势](/post/practical-postgresql/2/window-function)
 
 ### 第3章 事务控制与并发机制
 - ACID 特性实现机制

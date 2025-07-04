@@ -1,5 +1,6 @@
 +++
 title = "PostgreSQL 数据库实战指南 - 使用 `psql` 工具与图形化客户端"
+date = 2025-07-04
 lastmod = 2025-07-04T03:00:00+08:00
 tags = ["PostgreSQL", "practical", "book", "psql", "tools"]
 categories = ["PostgreSQL", "practical", "book", "psql", "tools"]

@@ -1,6 +1,6 @@
-
 +++
 title = "PostgreSQL 数据库实战指南 - 用户权限管理基础"
+date = 2025-07-04
 lastmod = 2025-07-04T04:00:00+08:00
 tags = ["PostgreSQL", "practical", "book", "RBAC"]
 categories = ["PostgreSQL", "practical", "book", "RBAC"]
