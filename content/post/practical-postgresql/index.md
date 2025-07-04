@@ -35,11 +35,11 @@ PostgreSQL 不再只是一个传统的关系型数据库。随着插件生态的
 ## 📘第一部分：关系型数据库实战（共6章）
 
 ### 第1章 PostgreSQL 基础与安装配置
-- [安装 PostgreSQL 17（Linux/Windows/Docker）](/post/practical-postgresql/1.1-install)
-- [初始化集群与基本配置（`pg_hba.conf`, `postgresql.conf`）](/post/practical-postgresql/1.2-init-cluster-config)
-- [使用 `psql` 工具与图形化客户端（如 pgAdmin）](/post/practical-postgresql/1.3-admin)
-- [用户权限管理基础](/post/practical-postgresql/1.4-user-control)
-- [实战：搭建本地开发环境并导入样例数据集](/post/practical-postgresql/1.5-local-dev-data-sample)
+- [安装 PostgreSQL 17（Linux/Windows/Docker）](/post/practical-postgresql/1-1-install)
+- [初始化集群与基本配置（`pg_hba.conf`, `postgresql.conf`）](/post/practical-postgresql/1-2-init-cluster-config)
+- [使用 `psql` 工具与图形化客户端（如 pgAdmin）](/post/practical-postgresql/1-3-admin)
+- [用户权限管理基础](/post/practical-postgresql/1-4-user-control)
+- [实战：搭建本地开发环境并导入样例数据集](/post/practical-postgresql/1-5-local-dev-data-sample)
 
 ### 第2章 SQL 语法与高级查询
 - SELECT、JOIN、CTE、窗口函数详解
