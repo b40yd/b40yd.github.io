@@ -163,8 +163,8 @@ PostgreSQL 不再只是一个传统的关系型数据库。随着插件生态的
 
 ### 第21章 性能调优实战
 - [查询优化技巧（索引、重写、缓存）](/post/practical-postgresql/21/query-optimization)
-- 配置参数调优（shared_buffers, work_mem, etc.）
-- 实战：电商平台高峰期性能瓶颈排查
+- [配置参数调优（shared_buffers, work_mem, etc.）](/post/practical-postgresql/21/parameter-tuning)
+- [实战：电商平台高峰期性能瓶颈排查](/post/practical-postgresql/21/practice-ecommerce-bottleneck)
 
 ### 第22章 监控与运维自动化
 - Prometheus + Grafana 监控 PostgreSQL
