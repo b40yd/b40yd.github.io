@@ -54,8 +54,8 @@ PostgreSQL 不再只是一个传统的关系型数据库。随着插件生态的
 - [实战：高并发下单系统事务设计](/post/practical-postgresql/3/transaction)
 
 ### 第4章 函数、触发器与过程语言
-- PL/pgSQL 编写存储过程
-- 触发器的定义与使用场景
+- [PL/pgSQL 编写存储过程](/post/practical-postgresql/4/function-procedure-tigger)
+- [触发器的定义与使用场景](/post/practical-postgresql/4/use-trigger-case)
 - 支持的其他语言：PL/Python、PL/Perl、PL/V8
 - 实战：订单状态变更自动记录日志
 
