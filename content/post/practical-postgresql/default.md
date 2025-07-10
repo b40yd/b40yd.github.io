@@ -56,19 +56,19 @@ PostgreSQL 不再只是一个传统的关系型数据库。随着插件生态的
 ### 第4章 函数、触发器与过程语言
 - [PL/pgSQL 编写存储过程](/post/practical-postgresql/4/function-procedure-tigger)
 - [触发器的定义与使用场景](/post/practical-postgresql/4/use-trigger-case)
-- 支持的其他语言：PL/Python、PL/Perl、PL/V8
-- 实战：订单状态变更自动记录日志
+- [支持的其他语言：PL/Python、PL/Perl、PL/V8](/post/practical-postgresql/4/other-languages)
+- [实战：订单状态变更自动记录日志](/post/practical-postgresql/4/practice-order-status-log)
 
 ### 第5章 表分区与继承
-- 范围、列表、哈希分区策略
-- 原生分区表 vs 继承表对比
-- 自动分区策略设置
-- 实战：按年份分区的历史数据归档系统
+- [范围、列表、哈希分区策略](/post/practical-postgresql/5/partition-strategies)
+- [原生分区表 vs 继承表对比](/post/practical-postgresql/5/native-vs-inheritance)
+- [自动分区策略设置](/post/practical-postgresql/5/auto-partitioning)
+- [实战：按年份分区的历史数据归档系统](/post/practical-postgresql/5/practice-partition-archive)
 
 ### 第6章 扩展与插件生态
-- 常用扩展介绍（`uuid-ossp`, `hstore`, `citext`, `ltree`）
-- 如何安装和使用扩展
-- 实战：使用 `pg_trgm` 提升模糊搜索效率
+- [常用扩展介绍（`uuid-ossp`, `hstore`, `citext`, `ltree`）](/post/practical-postgresql/6/common-extensions)
+- [如何安装和使用扩展](/post/practical-postgresql/6/install-extensions)
+- [实战：使用 `pg_trgm` 提升模糊搜索效率](/post/practical-postgresql/6/practice-pg-trgm)
 
 ---
 
