@@ -75,94 +75,94 @@ PostgreSQL 不再只是一个传统的关系型数据库。随着插件生态的
 ## 📘第二部分：图数据库支持与实战（共3章）
 
 ### 第7章 PostgreSQL 中的图数据库能力
-- 使用 `LTree` 实现树形结构
-- `pgGraph` 插件简介（或使用 `Apache AGE`）
-- 图遍历与路径查找
-- 实战：组织架构图的构建与查询
+- [使用 `LTree` 实现树形结构](/post/practical-postgresql/7/ltree-tree-structure)
+- [pgGraph 插件简介（或使用 Apache AGE）](/post/practical-postgresql/7/pg-graph-or-age)
+- [图遍历与路径查找](/post/practical-postgresql/7/graph-traversal)
+- [实战：组织架构图的构建与查询](/post/practical-postgresql/7/practice-org-chart)
 
 ### 第8章 使用 JSON + SQL 模拟图模型
-- 使用 JSONB 存储节点与边关系
-- 构建图结构并进行递归查询
-- 实战：社交网络中好友推荐算法模拟
+- [使用 JSONB 存储节点与边关系](/post/practical-postgresql/8/jsonb-graph-storage)
+- [构建图结构并进行递归查询](/post/practical-postgresql/8/recursive-query-graph)
+- [实战：社交网络中好友推荐算法模拟](/post/practical-postgresql/8/practice-social-recommendation)
 
 ### 第9章 Apache AGE 集成与图数据库实战
-- Apache AGE 简介与安装
-- Cypher 查询语言支持
-- 图数据库与关系数据混合查询
-- 实战：知识图谱的构建与查询优化
+- [Apache AGE 简介与安装](/post/practical-postgresql/9/age-intro-install)
+- [Cypher 查询语言支持](/post/practical-postgresql/9/cypher-query-language)
+- [图数据库与关系数据混合查询](/post/practical-postgresql/9/hybrid-queries)
+- [实战：知识图谱的构建与查询优化](/post/practical-postgresql/9/practice-knowledge-graph)
 
 ---
 
 ## 📘第三部分：NoSQL 能力扩展实战（共4章）
 
 ### 第10章 JSON 与 JSONB 数据类型深度解析
-- JSON vs JSONB 的区别
-- GIN 索引与 JSONB 查询优化
-- 支持的操作符与函数
-- 实战：日志系统的灵活字段存储与检索
+- [JSON vs JSONB 的区别](/post/practical-postgresql/10/json-vs-jsonb)
+- [GIN 索引与 JSONB 查询优化](/post/practical-postgresql/10/gin-index-jsonb)
+- [支持的操作符与函数](/post/practical-postgresql/10/operators-functions)
+- [实战：日志系统的灵活字段存储与检索](/post/practical-postgresql/10/practice-log-system)
 
 ### 第11章 文档型数据库风格操作
-- 使用 `jsonpath` 进行复杂文档查询
-- 动态 Schema 设计与更新策略
-- 实战：电商商品信息灵活字段管理
+- [使用 `jsonpath` 进行复杂文档查询](/post/practical-postgresql/11/jsonpath-query)
+- [动态 Schema 设计与更新策略](/post/practical-postgresql/11/dynamic-schema-strategies)
+- [实战：电商商品信息灵活字段管理](/post/practical-postgresql/11/practice-ecommerce-products)
 
 ### 第12章 时间序列数据处理
-- TimescaleDB 插件集成与使用
-- hypertable 创建与压缩策略
-- 实战：物联网设备监控数据存储与分析
+- [TimescaleDB 插件集成与使用](/post/practical-postgresql/12/timescaledb-intro)
+- [hypertable 创建与压缩策略](/post/practical-postgresql/12/hypertable-compression)
+- [实战：物联网设备监控数据存储与分析](/post/practical-postgresql/12/practice-iot-monitoring)
 
 ### 第13章 全文搜索与向量相似度匹配
-- `tsvector` 与 `GIN` 索引全文搜索
-- 使用 `pgvector` 插件进行向量检索
-- 实战：图像特征匹配与文本语义搜索
+- [tsvector 与 GIN 索引全文搜索](/post/practical-postgresql/13/full-text-search)
+- [使用 pgvector 插件进行向量检索](/post/practical-postgresql/13/pgvector-similarity-search)
+- [实战：图像特征匹配与文本语义搜索](/post/practical-postgresql/13/practice-image-search)
 
 ---
 
 ## 📘第四部分：分布式数据库架构实战（共5章）
 
 ### 第14章 PostgreSQL 的分布式方案概览
-- Citus 扩展简介
-- Postgres-XC / Postgres-XL 对比
-- 实战：选择适合业务场景的分布式架构
+- [Citus 扩展简介](/post/practical-postgresql/14/distributed-overview)
+- [Postgres-XC / Postgres-XL 对比](/post/practical-postgresql/14/postgres-xc-xl-comparison)
+- [实战：选择适合业务场景的分布式架构](/post/practical-postgresql/14/practice-choose-architecture)
 
 ### 第15章 Citus 扩展实战
-- 安装 Citus 并创建分布式表
-- 分片策略（hash, range, append）
-- 分布式 JOIN 与聚合查询
-- 实战：用户行为数据的分布式统计分析
+- [安装 Citus 并创建分布式表](/post/practical-postgresql/15/citus-install-setup)
+- [分片策略（hash, range, append）](/post/practical-postgresql/15/sharding-strategies)
+- [分布式 JOIN 与聚合查询](/post/practical-postgresql/15/distributed-joins-aggregates)
+- [实战：用户行为数据的分布式统计分析](/post/practical-postgresql/15/practice-user-analytics)
 
 ### 第16章 多主复制与读写分离
-- 使用 BDR（Bi-Directional Replication）
-- 逻辑复制与物理复制对比
-- 实战：跨地域部署下的数据同步方案
+- [使用 BDR（Bi-Directional Replication）](/post/practical-postgresql/16/bdr-intro)
+- [逻辑复制与物理复制对比](/post/practical-postgresql/16/logical-vs-physical-replication)
+- [实战：跨地域部署下的数据同步方案](/post/practical-postgresql/16/practice-geo-replication)
 
 ### 第17章 PostgreSQL + Kubernetes 实战
-- 使用 Crunchy Data Operator 部署
-- 自动备份、恢复、扩缩容
-- 实战：云原生环境下 PostgreSQL 集群管理
+- [使用 Crunchy Data Operator 部署](/post/practical-postgresql/17/crunchy-data-operator)
+- [自动备份、恢复、扩缩容](/post/practical-postgresql/17/backup-recovery-scaling)
+- [实战：云原生环境下 PostgreSQL 集群管理](/post/practical-postgresql/17/practice-cloud-native-management)
 
 ### 第18章 多租户架构设计
-- 行级安全策略（RLS）与 Row-Level Security
-- 使用模式隔离或多租户扩展（如 TenantKit）
-- 实战：SaaS 应用中的多租户数据隔离
+- [行级安全策略（RLS）与 Row-Level Security](/post/practical-postgresql/18/row-level-security)
+- [使用模式隔离或多租户扩展（如 TenantKit）](/post/practical-postgresql/18/schema-per-tenant)
+- [实战：SaaS 应用中的多租户数据隔离](/post/practical-postgresql/18/practice-saas-isolation)
 
 ---
 
 ## 📘第五部分：高可用、安全与性能调优（共4章）
 
 ### 第19章 高可用与故障转移
-- 流复制（Streaming Replication）配置
-- Patroni + etcd 高可用集群部署
-- 实战：实现自动故障切换的生产级架构
+- [流复制（Streaming Replication）配置](/post/practical-postgresql/19/streaming-replication)
+- [Patroni + etcd 高可用集群部署](/post/practical-postgresql/19/patroni-etcd-ha)
+- [实战：实现自动故障切换的生产级架构](/post/practical-postgresql/19/practice-auto-failover)
 
 ### 第20章 安全机制与合规性
-- SSL/TLS 加密连接
-- 行级安全与列级权限控制
-- 数据脱敏与审计日志
-- 实战：金融系统中的访问控制与审计
+- [SSL/TLS 加密连接](/post/practical-postgresql/20/ssl-tls-encryption)
+- [行级安全与列级权限控制](/post/practical-postgresql/20/row-column-security)
+- [数据脱敏与审计日志](/post/practical-postgresql/20/data-masking-audit)
+- [实战：金融系统中的访问控制与审计](/post/practical-postgresql/20/practice-financial-security)
 
 ### 第21章 性能调优实战
-- 查询优化技巧（索引、重写、缓存）
+- [查询优化技巧（索引、重写、缓存）](/post/practical-postgresql/21/query-optimization)
 - 配置参数调优（shared_buffers, work_mem, etc.）
 - 实战：电商平台高峰期性能瓶颈排查
 
