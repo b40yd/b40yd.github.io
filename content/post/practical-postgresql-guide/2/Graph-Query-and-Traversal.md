@@ -49,24 +49,22 @@ openCypher 是一种声明式图查询语言，其语法直观，设计灵感来
 
 ```sql
 -- 确保图和数据存在
--- SELECT create_graph('social_network');
--- SELECT * FROM ag_graph.create_v_cypher('social_network', $$ CREATE (a:Person {name: 'Alice'}), (b:Person {name: 'Bob'}), (c:Person {name: 'Charlie'}), (d:Person {name: 'David'}) RETURN a, b, c, d $$);
--- SELECT * FROM ag_graph.create_e_cypher('social_network', $$ MATCH (a:Person), (b:Person), (c:Person), (d:Person) WHERE a.name = 'Alice' AND b.name = 'Bob' AND c.name = 'Charlie' AND d.name = 'David' CREATE (a)-[:FOLLOWS]->(b), (b)-[:FOLLOWS]->(c), (a)-[:FOLLOWS]->(d) RETURN * $$);
+SELECT create_graph('social_network');
 
 -- 1. 查找所有直接关注 Bob 的人 (单跳关系)
-SELECT * FROM ag_graph.cypher('social_network', $$
+SELECT * FROM cypher('social_network', $$
     MATCH (follower:Person)-[:FOLLOWS]->(followed:Person {name: 'Bob'})
     RETURN follower.name
 $$) AS result;
 
 -- 2. 查找 Bob 关注的人 (单跳关系)
-SELECT * FROM ag_graph.cypher('social_network', $$
+SELECT * FROM cypher('social_network', $$
     MATCH (follower:Person {name: 'Bob'})-[:FOLLOWS]->(followed:Person)
     RETURN followed.name
 $$) AS result;
 
 -- 3. 查找 Alice 的“朋友的朋友”（两跳关系，不要求双向关注）
-SELECT * FROM ag_graph.cypher('social_network', $$
+SELECT * FROM cypher('social_network', $$
     MATCH (alice:Person {name: 'Alice'})-[:FOLLOWS]->(friend:Person)-[:FOLLOWS]->(friend_of_friend:Person)
     WHERE friend_of_friend <> alice -- 排除自己
     RETURN DISTINCT friend_of_friend.name
@@ -75,13 +73,13 @@ $$) AS result;
 -- 4. 查找 Alice 到 Charlie 的所有关注路径 (可变长度路径)
 -- 使用 *min_hops..max_hops 表示跳数范围
 -- 例如：*1..3 表示 1 到 3 跳的路径
-SELECT * FROM ag_graph.cypher('social_network', $$
+SELECT * FROM cypher('social_network', $$
     MATCH p = (alice:Person {name: 'Alice'})-[*1..3]->(charlie:Person {name: 'Charlie'})
     RETURN p -- 返回整个路径对象
 $$) AS result;
 
 -- 如果要获取路径中的节点名称：
-SELECT * FROM ag_graph.cypher('social_network', $$
+SELECT * FROM cypher('social_network', $$
     MATCH p = (alice:Person {name: 'Alice'})-[*1..3]->(charlie:Person {name: 'Charlie'})
     RETURN nodes(p) AS path_nodes
 $$) AS result;
@@ -90,7 +88,7 @@ $$) AS result;
 -- 5. 查找最短路径 (如果关系有权重，可以使用 Dijkstra 等算法，但 openCypher 默认是跳数最短)
 -- Apache Age 目前没有内置的 shortestPath() 函数，需要手动实现或限制跳数
 -- 例如，查找 Alice 到 Charlie 的最短路径（假设最多3跳）
-SELECT * FROM ag_graph.cypher('social_network', $$
+SELECT * FROM cypher('social_network', $$
     MATCH p = (alice:Person {name: 'Alice'})-[*1..]->(charlie:Person {name: 'Charlie'})
     RETURN p
     ORDER BY length(p) ASC
@@ -114,14 +112,14 @@ openCypher 允许你对图查询结果进行强大的过滤、聚合和排序操
 -- (u3:User {name: 'Charlie'}) -[:VIEWED]-> (p1:Product {name: 'Laptop'})
 
 -- 1. 查找购买了 "Laptop" 且购买数量大于1的用户
-SELECT * FROM ag_graph.cypher('ecommerce_graph', $$
+SELECT * FROM cypher('ecommerce_graph', $$
     MATCH (u:User)-[b:BOUGHT]->(p:Product {name: 'Laptop'})
     WHERE b.quantity > 1
     RETURN u.name AS buyer_name, b.quantity
 $$) AS result;
 
 -- 2. 查找最受欢迎的商品 (被购买次数最多的商品)
-SELECT * FROM ag_graph.cypher('ecommerce_graph', $$
+SELECT * FROM cypher('ecommerce_graph', $$
     MATCH (u:User)-[:BOUGHT]->(p:Product)
     RETURN p.name AS product_name, COUNT(u) AS buyers_count
     ORDER BY buyers_count DESC
@@ -129,7 +127,7 @@ SELECT * FROM ag_graph.cypher('ecommerce_graph', $$
 $$) AS result;
 
 -- 3. 查找与 Alice 兴趣相似的用户（共同购买了至少2件相同商品）
-SELECT * FROM ag_graph.cypher('ecommerce_graph', $$
+SELECT * FROM cypher('ecommerce_graph', $$
     MATCH (alice:User {name: 'Alice'})-[b1:BOUGHT]->(p:Product)<-[b2:BOUGHT]-(other:User)
     WHERE alice <> other
     RETURN other.name AS similar_user, COUNT(DISTINCT p) AS common_products_count
@@ -138,14 +136,14 @@ SELECT * FROM ag_graph.cypher('ecommerce_graph', $$
 $$) AS result;
 
 -- 4. 查找用户及其购买商品的总金额 (聚合关系属性)
-SELECT * FROM ag_graph.cypher('ecommerce_graph', $$
+SELECT * FROM cypher('ecommerce_graph', $$
     MATCH (u:User)-[b:BOUGHT]->(p:Product)
     RETURN u.name AS user_name, SUM(b.quantity * p.price) AS total_spent
     ORDER BY total_spent DESC
 $$) AS result;
 
 -- 5. 查找 Bob 浏览过但未购买的商品 (使用 NOT 关键字)
-SELECT * FROM ag_graph.cypher('ecommerce_graph', $$
+SELECT * FROM cypher('ecommerce_graph', $$
     MATCH (bob:User {name: 'Bob'})-[:VIEWED]->(p:Product)
     WHERE NOT (bob)-[:BOUGHT]->(p)
     RETURN p.name AS product_not_bought
@@ -161,21 +159,21 @@ openCypher 允许你构建更复杂的图模式，以匹配特定的结构。
 ```sql
 -- 1. 查找 Alice 的“二度推荐”商品：Alice 关注的人购买过的，但 Alice 自己没买过的商品
 -- 假设有 Person 和 Product 节点，以及 FOLLOWS 和 BOUGHT 关系
-SELECT * FROM ag_graph.cypher('social_network', $$
+SELECT * FROM cypher('social_network', $$
     MATCH (alice:Person {name: 'Alice'})-[:FOLLOWS]->(friend:Person)-[:BOUGHT]->(product:Product)
     WHERE NOT (alice)-[:BOUGHT]->(product) -- Alice 自己没有购买过
     RETURN DISTINCT product.name AS recommended_product
 $$) AS result;
 
 -- 2. 查找循环关系：例如，A 关注 B，B 关注 C，C 关注 A
-SELECT * FROM ag_graph.cypher('social_network', $$
+SELECT * FROM cypher('social_network', $$
     MATCH (a:Person)-[:FOLLOWS]->(b:Person)-[:FOLLOWS]->(c:Person)-[:FOLLOWS]->(a)
     RETURN a.name, b.name, c.name
 $$) AS result;
 
 -- 3. 使用 UNWIND 和 COLLECT 进行数据重塑
 -- 查找每个用户购买的所有商品名称列表
-SELECT * FROM ag_graph.cypher('ecommerce_graph', $$
+SELECT * FROM cypher('ecommerce_graph', $$
     MATCH (u:User)-[:BOUGHT]->(p:Product)
     RETURN u.name AS user_name, COLLECT(p.name) AS purchased_products
 $$) AS result;
@@ -197,7 +195,7 @@ $$) AS result;
   * **返回必要的数据**：只在 `RETURN` 子句中返回所需的数据，避免返回整个节点或关系对象，如果只需要它们的某个属性。
   * **`EXPLAIN` 和 `EXPLAIN ANALYZE`**：Apache Age也支持使用 `EXPLAIN` 来分析 openCypher 查询的执行计划，这对于性能调优至关重要。
     ```sql
-    EXPLAIN SELECT * FROM ag_graph.cypher('social_network', $$
+    EXPLAIN SELECT * FROM cypher('social_network', $$
         MATCH (a:Person)-[:FOLLOWS]->(b:Person) RETURN a.name, b.name
     $$);
     ```

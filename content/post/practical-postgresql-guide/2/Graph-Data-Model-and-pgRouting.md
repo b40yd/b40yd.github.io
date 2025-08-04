@@ -99,9 +99,9 @@ author = "b40yd"
 SELECT create_graph('social_network');
 
 -- 2. 创建节点 (Users)
--- 使用 ag_graph.cypher 函数创建节点，第一个参数是图的名称，第二个参数是 openCypher 语句 [1]
+-- 使用 cypher 函数创建节点，第一个参数是图的名称，第二个参数是 openCypher 语句 [1]
 -- 节点会自动分配一个唯一的 ID (ag_id)
-SELECT * FROM ag_graph.cypher('social_network', $$
+SELECT * FROM cypher('social_network', $$
     CREATE (a:Person {name: 'Alice', age: 30}),
            (b:Person {name: 'Bob', age: 25}),
            (c:Person {name: 'Charlie', age: 35})
@@ -109,9 +109,9 @@ SELECT * FROM ag_graph.cypher('social_network', $$
 $$) AS nodes;
 
 -- 3. 创建关系 (FOLLOWS)
--- 使用 ag_graph.cypher 函数创建关系 [1]
+-- 使用 cypher 函数创建关系 [1]
 -- 关系需要指定起点节点、关系类型、终点节点，以及可选的属性
-SELECT * FROM ag_graph.cypher('social_network', $$
+SELECT * FROM cypher('social_network', $$
     MATCH (a:Person), (b:Person), (c:Person)
     WHERE a.name = 'Alice' AND b.name = 'Bob' AND c.name = 'Charlie'
     CREATE (a)-->(b),
@@ -120,31 +120,31 @@ SELECT * FROM ag_graph.cypher('social_network', $$
 $$) AS relationships;
 
 -- 4. 查看图中的所有节点
--- 使用 openCypher 查询语言，通过 ag_graph.cypher 函数执行查询
-SELECT * FROM ag_graph.cypher('social_network', $$    MATCH (n) RETURN n$$) AS nodes;
+-- 使用 openCypher 查询语言，通过 cypher 函数执行查询
+SELECT * FROM cypher('social_network', $$    MATCH (n) RETURN n$$) AS nodes;
 
 -- 5. 查看图中的所有关系
-SELECT * FROM ag_graph.cypher('social_network', $$    MATCH ()-[r]->() RETURN r$$) AS relationships;
+SELECT * FROM cypher('social_network', $$    MATCH ()-[r]->() RETURN r$$) AS relationships;
 
 -- 6. 查看特定标签的节点及其属性
-SELECT * FROM ag_graph.cypher('social_network', $$    MATCH (p:Person) WHERE p.age < 30 RETURN p.name, p.age$$) AS young_people;
+SELECT * FROM cypher('social_network', $$    MATCH (p:Person) WHERE p.age < 30 RETURN p.name, p.age$$) AS young_people;
 
 -- 7. 节点和关系的更新与删除
 -- 更新节点属性
-SELECT * FROM ag_graph.cypher('social_network', $$
+SELECT * FROM cypher('social_network', $$
     MATCH (p:Person {name: 'Alice'})
     SET p.age = 31
     RETURN p
 $$) AS updated_alice;
 
 -- 删除关系
-SELECT * FROM ag_graph.cypher('social_network', $$
+SELECT * FROM cypher('social_network', $$
     MATCH (a:Person {name: 'Alice'})-->(b:Person {name: 'Bob'})
     DELETE r
 $$) AS deleted_relationship;
 
 -- 删除节点及其所有关联关系
-SELECT * FROM ag_graph.cypher('social_network', $$
+SELECT * FROM cypher('social_network', $$
     MATCH (c:Person {name: 'Charlie'})
     DETACH DELETE c -- DETACH DELETE 会先删除节点关联的所有关系，再删除节点本身
 $$) AS deleted_charlie;
@@ -161,26 +161,26 @@ Apache Age 的一个强大之处在于它允许你将图数据和传统的关系
 ```sql
 -- 1. 将现有关系型数据映射为图节点
 -- 从 users 表创建 Person 节点
-SELECT * FROM ag_graph.cypher('social_network', $$    CREATE (p:Person {user_id: 1, name: 'Alice'})$$) AS alice_node; -- 实际中，可以编写循环或函数来批量导入
+SELECT * FROM cypher('social_network', $$    CREATE (p:Person {user_id: 1, name: 'Alice'})$$) AS alice_node; -- 实际中，可以编写循环或函数来批量导入
 
-SELECT * FROM ag_graph.cypher('social_network', $$    CREATE (p:Person {user_id: 2, name: 'Bob'})$$) AS bob_node;
+SELECT * FROM cypher('social_network', $$    CREATE (p:Person {user_id: 2, name: 'Bob'})$$) AS bob_node;
 
 -- 从 products 表创建 Product 节点
-SELECT * FROM ag_graph.cypher('social_network', $$    CREATE (prod:Product {product_id: 1, name: 'Laptop Pro', price: 1200.00})$$) AS laptop_node;
+SELECT * FROM cypher('social_network', $$    CREATE (prod:Product {product_id: 1, name: 'Laptop Pro', price: 1200.00})$$) AS laptop_node;
 
-SELECT * FROM ag_graph.cypher('social_network', $$    CREATE (prod:Product {product_id: 2, name: 'Mechanical Keyboard', price: 80.00})$$) AS keyboard_node;
+SELECT * FROM cypher('social_network', $$    CREATE (prod:Product {product_id: 2, name: 'Mechanical Keyboard', price: 80.00})$$) AS keyboard_node;
 
 -- 2. 基于 order_items 表创建 BUY 关系
 -- 这需要更复杂的逻辑，可能通过 PL/pgSQL 函数或应用程序代码来批量创建
 -- 假设我们已经知道 user_id 和 product_id 对应的 ag_id，或者通过属性匹配
 -- 这里我们手动指定 user_id 和 product_id 来创建关系
-SELECT * FROM ag_graph.cypher('social_network', $$
+SELECT * FROM cypher('social_network', $$
     MATCH (u:Person {user_id: 1}), (p:Product {product_id: 1})
     CREATE (u)-->(p)
     RETURN u, b, p
 $$) AS bought_relationship_1;
 
-SELECT * FROM ag_graph.cypher('social_network', $$
+SELECT * FROM cypher('social_network', $$
     MATCH (u:Person {user_id: 1}), (p:Product {product_id: 2})
     CREATE (u)-->(p)
     RETURN u, b, p
@@ -194,7 +194,7 @@ JOIN (
     SELECT
         (u.properties ->> 'user_id')::INTEGER AS user_id,
         (p.properties ->> 'name')::TEXT AS product_name
-    FROM ag_graph.cypher('social_network', $$
+    FROM cypher('social_network', $$
         MATCH (u:Person)-->(p:Product)
         WHERE p.name = 'Laptop Pro'
         RETURN u, p
@@ -203,7 +203,7 @@ JOIN (
     JOIN LATERAL (SELECT * FROM result.p) AS p(id, label, properties) ON true
 ) AS graph_data ON u.user_id = graph_data.user_id;
 
--- 这个例子展示了如何通过 ag_graph.cypher 函数的输出（这是一个 JSONB 结构）
+-- 这个例子展示了如何通过 cypher 函数的输出（这是一个 JSONB 结构）
 -- 来提取节点属性，并与关系型表进行 JOIN。
 -- 注意：这种直接在 SQL 中解析 JSONB 并 JOIN 的方式会比较复杂和低效，
 -- 实际生产中通常会通过应用程序层或更高级的集成策略来处理。
