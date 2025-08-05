@@ -106,7 +106,7 @@ SELECT * FROM cypher('social_network', $$
            (b:Person {name: 'Bob', age: 25}),
            (c:Person {name: 'Charlie', age: 35})
     RETURN a, b, c
-$$) AS nodes;
+$$) AS (a agtype, b agtype, c agtype);
 
 -- 3. 创建关系 (FOLLOWS)
 -- 使用 cypher 函数创建关系 [1]
@@ -114,20 +114,20 @@ $$) AS nodes;
 SELECT * FROM cypher('social_network', $$
     MATCH (a:Person), (b:Person), (c:Person)
     WHERE a.name = 'Alice' AND b.name = 'Bob' AND c.name = 'Charlie'
-    CREATE (a)-->(b),
-           (b)-->(c)
-    RETURN r1, r2
-$$) AS relationships;
+    CREATE (a),
+           (b)
+    RETURN a, b
+$$) AS (a agtype, b agtype);
 
 -- 4. 查看图中的所有节点
 -- 使用 openCypher 查询语言，通过 cypher 函数执行查询
-SELECT * FROM cypher('social_network', $$    MATCH (n) RETURN n$$) AS nodes;
+SELECT * FROM cypher('social_network', $$    MATCH (n) RETURN n$$) AS (n agtype);
 
 -- 5. 查看图中的所有关系
-SELECT * FROM cypher('social_network', $$    MATCH ()-[r]->() RETURN r$$) AS relationships;
+SELECT * FROM cypher('social_network', $$    MATCH ()-[r]->() RETURN r$$) AS (r agtype);
 
 -- 6. 查看特定标签的节点及其属性
-SELECT * FROM cypher('social_network', $$    MATCH (p:Person) WHERE p.age < 30 RETURN p.name, p.age$$) AS young_people;
+SELECT * FROM cypher('social_network', $$    MATCH (p:Person) WHERE p.age < 30 RETURN p.name, p.age$$) AS (name agtype, age agtype);
 
 -- 7. 节点和关系的更新与删除
 -- 更新节点属性
@@ -135,19 +135,20 @@ SELECT * FROM cypher('social_network', $$
     MATCH (p:Person {name: 'Alice'})
     SET p.age = 31
     RETURN p
-$$) AS updated_alice;
+$$) AS (p agtype);
 
 -- 删除关系
 SELECT * FROM cypher('social_network', $$
-    MATCH (a:Person {name: 'Alice'})-->(b:Person {name: 'Bob'})
-    DELETE r
-$$) AS deleted_relationship;
+    MATCH (a:Person {name: 'Alice'})
+    DELETE a
+$$) AS (a agtype);
+
 
 -- 删除节点及其所有关联关系
 SELECT * FROM cypher('social_network', $$
     MATCH (c:Person {name: 'Charlie'})
-    DETACH DELETE c -- DETACH DELETE 会先删除节点关联的所有关系，再删除节点本身
-$$) AS deleted_charlie;
+    DETACH DELETE c
+$$) AS (c agtype);
 ```
 
 ##### 9.4 属性图模型与关系型数据的结合
@@ -161,14 +162,14 @@ Apache Age 的一个强大之处在于它允许你将图数据和传统的关系
 ```sql
 -- 1. 将现有关系型数据映射为图节点
 -- 从 users 表创建 Person 节点
-SELECT * FROM cypher('social_network', $$    CREATE (p:Person {user_id: 1, name: 'Alice'})$$) AS alice_node; -- 实际中，可以编写循环或函数来批量导入
+SELECT * FROM cypher('social_network', $$    CREATE (p:Person {user_id: 1, name: 'Alice'})$$) AS (p agtype); -- 实际中，可以编写循环或函数来批量导入
 
-SELECT * FROM cypher('social_network', $$    CREATE (p:Person {user_id: 2, name: 'Bob'})$$) AS bob_node;
+SELECT * FROM cypher('social_network', $$    CREATE (p:Person {user_id: 2, name: 'Bob'})$$) AS (p agtype);
 
 -- 从 products 表创建 Product 节点
-SELECT * FROM cypher('social_network', $$    CREATE (prod:Product {product_id: 1, name: 'Laptop Pro', price: 1200.00})$$) AS laptop_node;
+SELECT * FROM cypher('social_network', $$    CREATE (prod:Product {product_id: 1, name: 'Laptop Pro', price: 1200.00})$$) AS (prod agtype);
 
-SELECT * FROM cypher('social_network', $$    CREATE (prod:Product {product_id: 2, name: 'Mechanical Keyboard', price: 80.00})$$) AS keyboard_node;
+SELECT * FROM cypher('social_network', $$    CREATE (prod:Product {product_id: 2, name: 'Mechanical Keyboard', price: 80.00})$$) AS (prod agtype);
 
 -- 2. 基于 order_items 表创建 BUY 关系
 -- 这需要更复杂的逻辑，可能通过 PL/pgSQL 函数或应用程序代码来批量创建
@@ -176,15 +177,15 @@ SELECT * FROM cypher('social_network', $$    CREATE (prod:Product {product_id: 2
 -- 这里我们手动指定 user_id 和 product_id 来创建关系
 SELECT * FROM cypher('social_network', $$
     MATCH (u:Person {user_id: 1}), (p:Product {product_id: 1})
-    CREATE (u)-->(p)
-    RETURN u, b, p
-$$) AS bought_relationship_1;
+    CREATE (u)
+    RETURN u, p
+$$) AS (u agtype,p agtype);
 
 SELECT * FROM cypher('social_network', $$
     MATCH (u:Person {user_id: 1}), (p:Product {product_id: 2})
-    CREATE (u)-->(p)
-    RETURN u, b, p
-$$) AS bought_relationship_2;
+    CREATE (u)
+    RETURN u, p
+$$) AS (u agtype,p agtype);
 
 -- 3. 进行混合查询：结合关系型数据和图数据
 -- 查找购买了特定商品的用户名称（通过图查询，然后关联回关系型数据）

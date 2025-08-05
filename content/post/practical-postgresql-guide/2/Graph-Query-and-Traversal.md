@@ -55,20 +55,20 @@ SELECT create_graph('social_network');
 SELECT * FROM cypher('social_network', $$
     MATCH (follower:Person)-[:FOLLOWS]->(followed:Person {name: 'Bob'})
     RETURN follower.name
-$$) AS result;
+$$) AS (follwer agtype);
 
 -- 2. 查找 Bob 关注的人 (单跳关系)
 SELECT * FROM cypher('social_network', $$
     MATCH (follower:Person {name: 'Bob'})-[:FOLLOWS]->(followed:Person)
     RETURN followed.name
-$$) AS result;
+$$) AS (follwer agtype);
 
 -- 3. 查找 Alice 的“朋友的朋友”（两跳关系，不要求双向关注）
 SELECT * FROM cypher('social_network', $$
     MATCH (alice:Person {name: 'Alice'})-[:FOLLOWS]->(friend:Person)-[:FOLLOWS]->(friend_of_friend:Person)
     WHERE friend_of_friend <> alice -- 排除自己
     RETURN DISTINCT friend_of_friend.name
-$$) AS result;
+$$) AS (friend_of_friend agtype);
 
 -- 4. 查找 Alice 到 Charlie 的所有关注路径 (可变长度路径)
 -- 使用 *min_hops..max_hops 表示跳数范围
@@ -76,13 +76,13 @@ $$) AS result;
 SELECT * FROM cypher('social_network', $$
     MATCH p = (alice:Person {name: 'Alice'})-[*1..3]->(charlie:Person {name: 'Charlie'})
     RETURN p -- 返回整个路径对象
-$$) AS result;
+$$) AS (p agtype);
 
 -- 如果要获取路径中的节点名称：
 SELECT * FROM cypher('social_network', $$
     MATCH p = (alice:Person {name: 'Alice'})-[*1..3]->(charlie:Person {name: 'Charlie'})
     RETURN nodes(p) AS path_nodes
-$$) AS result;
+$$) AS (path_nodes agtype);
 -- 注意：nodes(p) 返回的是 ag_node 的 JSONB 数组，需要进一步解析。
 
 -- 5. 查找最短路径 (如果关系有权重，可以使用 Dijkstra 等算法，但 openCypher 默认是跳数最短)
@@ -93,7 +93,7 @@ SELECT * FROM cypher('social_network', $$
     RETURN p
     ORDER BY length(p) ASC
     LIMIT 1
-$$) AS result;
+$$) AS (p agtype);
 ```
 
 ##### 10.3 过滤、聚合与排序
@@ -116,7 +116,7 @@ SELECT * FROM cypher('ecommerce_graph', $$
     MATCH (u:User)-[b:BOUGHT]->(p:Product {name: 'Laptop'})
     WHERE b.quantity > 1
     RETURN u.name AS buyer_name, b.quantity
-$$) AS result;
+$$) AS (buyer_name agtype, quantity agtype);
 
 -- 2. 查找最受欢迎的商品 (被购买次数最多的商品)
 SELECT * FROM cypher('ecommerce_graph', $$
@@ -124,7 +124,7 @@ SELECT * FROM cypher('ecommerce_graph', $$
     RETURN p.name AS product_name, COUNT(u) AS buyers_count
     ORDER BY buyers_count DESC
     LIMIT 5
-$$) AS result;
+$$) AS (product_name agtype, buyers_count agtype);
 
 -- 3. 查找与 Alice 兴趣相似的用户（共同购买了至少2件相同商品）
 SELECT * FROM cypher('ecommerce_graph', $$
@@ -133,7 +133,7 @@ SELECT * FROM cypher('ecommerce_graph', $$
     RETURN other.name AS similar_user, COUNT(DISTINCT p) AS common_products_count
     ORDER BY common_products_count DESC
     LIMIT 5
-$$) AS result;
+$$) AS (similar_user agtype, common_products_count agtype);
 
 -- 4. 查找用户及其购买商品的总金额 (聚合关系属性)
 SELECT * FROM cypher('ecommerce_graph', $$
@@ -147,7 +147,7 @@ SELECT * FROM cypher('ecommerce_graph', $$
     MATCH (bob:User {name: 'Bob'})-[:VIEWED]->(p:Product)
     WHERE NOT (bob)-[:BOUGHT]->(p)
     RETURN p.name AS product_not_bought
-$$) AS result;
+$$) AS (product_not_bought agtype);
 ```
 
 ##### 10.4 复杂模式匹配与高级操作
@@ -163,20 +163,20 @@ SELECT * FROM cypher('social_network', $$
     MATCH (alice:Person {name: 'Alice'})-[:FOLLOWS]->(friend:Person)-[:BOUGHT]->(product:Product)
     WHERE NOT (alice)-[:BOUGHT]->(product) -- Alice 自己没有购买过
     RETURN DISTINCT product.name AS recommended_product
-$$) AS result;
+$$) AS (recommended_product agtype);
 
 -- 2. 查找循环关系：例如，A 关注 B，B 关注 C，C 关注 A
 SELECT * FROM cypher('social_network', $$
     MATCH (a:Person)-[:FOLLOWS]->(b:Person)-[:FOLLOWS]->(c:Person)-[:FOLLOWS]->(a)
     RETURN a.name, b.name, c.name
-$$) AS result;
+$$) AS (a agtype, b agtype, c agtype);
 
 -- 3. 使用 UNWIND 和 COLLECT 进行数据重塑
 -- 查找每个用户购买的所有商品名称列表
 SELECT * FROM cypher('ecommerce_graph', $$
     MATCH (u:User)-[:BOUGHT]->(p:Product)
     RETURN u.name AS user_name, COLLECT(p.name) AS purchased_products
-$$) AS result;
+$$) AS (user_name agtype, purchased_products agtype);
 ```
 
 ##### 10.5 openCypher 查询的性能考量
