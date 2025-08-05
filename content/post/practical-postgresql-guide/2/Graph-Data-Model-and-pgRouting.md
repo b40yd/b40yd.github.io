@@ -114,8 +114,8 @@ $$) AS (a agtype, b agtype, c agtype);
 SELECT * FROM cypher('social_network', $$
     MATCH (a:Person), (b:Person), (c:Person)
     WHERE a.name = 'Alice' AND b.name = 'Bob' AND c.name = 'Charlie'
-    CREATE (a),
-           (b)
+    CREATE (a)-[:FOLLOWS]->(b),
+           (b)-[:FOLLOWS]->(a)
     RETURN a, b
 $$) AS (a agtype, b agtype);
 
@@ -125,6 +125,11 @@ SELECT * FROM cypher('social_network', $$    MATCH (n) RETURN n$$) AS (n agtype)
 
 -- 5. 查看图中的所有关系
 SELECT * FROM cypher('social_network', $$    MATCH ()-[r]->() RETURN r$$) AS (r agtype);
+-- OR
+SELECT * FROM cypher('social_network', $$
+        MATCH (a:Person)-[:FOLLOWS]->(b:Person) RETURN a.name, b.name
+    $$) AS (a agtype, b agtype);
+
 
 -- 6. 查看特定标签的节点及其属性
 SELECT * FROM cypher('social_network', $$    MATCH (p:Person) WHERE p.age < 30 RETURN p.name, p.age$$) AS (name agtype, age agtype);
