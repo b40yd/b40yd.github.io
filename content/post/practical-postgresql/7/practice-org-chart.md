@@ -132,8 +132,11 @@ $$) AS (employee_name agtype);
 **查询 2：查找员工“Bob”的实线管理链条**
 ```sql
 SELECT * FROM cypher('organization_graph', $$
-    MATCH path = (e:Employee {name: 'Bob'})-[:REPORTS_TO*1..]->(manager)
-    RETURN [node IN nodes(path) | node.name]
+    MATCH (e:Employee {name: 'Bob'})
+    OPTIONAL MATCH (e)-[:REPORTS_TO]->(m1)
+    OPTIONAL MATCH (m1)-[:REPORTS_TO]->(m2)
+    OPTIONAL MATCH (m2)-[:REPORTS_TO]->(m3)
+    RETURN [e.name, m1.name, m2.name, m3.name] AS reporting_line
 $$) AS (reporting_line agtype);
 ```
 `nodes(path)` 函数可以提取路径上的所有节点。
@@ -141,7 +144,12 @@ $$) AS (reporting_line agtype);
 **查询 3：查找向“CEO Office”汇报的所有人（包括实线和虚线）**
 ```sql
 SELECT * FROM cypher('organization_graph', $$
-    MATCH (p)-[r:REPORTS_TO|:DOTTED_LINE_REPORTS_TO]->(d:Department {name: 'CEO Office'})
+    MATCH (p)-[r:REPORTS_TO]->(d:Department {name: 'CEO Office'})
+    RETURN p.name, type(r) AS report_type
+$$) AS (person_name agtype, report_type agtype)
+UNION
+SELECT * FROM cypher('organization_graph', $$
+    MATCH (p)-[r:DOTTED_LINE_REPORTS_TO]->(d:Department {name: 'CEO Office'})
     RETURN p.name, type(r) AS report_type
 $$) AS (person_name agtype, report_type agtype);
 ```
