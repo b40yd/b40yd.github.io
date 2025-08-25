@@ -1,5 +1,5 @@
 +++
-title = "Python Progress Bar"
+title = "Use AI writing an Schema DataClass for Python."
 date = 2025-08-25
 lastmod = 2025-08-25T10:09:17+08:00
 tags = ["python", "schema", "dataclass"]
@@ -561,7 +561,3 @@ pip install -r requirements-dev.txt
 - Add appropriate docstrings
 - Add test cases for new features
 - Maintain Python 2/3 compatibility
-
-## License
-
-This project is licensed under the GNU General Public License v3.0. See the [LICENSE](LICENSE) file for details.
