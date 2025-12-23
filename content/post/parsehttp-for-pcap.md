@@ -1,7 +1,7 @@
 +++
 title = "构建高性能 MCP 协议分析工具：基于 Rust 的流量聚合与 SSE 解析实践"
 date = 2025-12-23
-lastmod = 2025-12-23T16:11:29+08:00
+lastmod = 2025-12-23T16:13:06+08:00
 tags = ["MCP", "SSE", "pcap", "http"]
 categories = ["MCP", "SSE", "pcap", "http"]
 draft = false
@@ -160,6 +160,10 @@ fn pretty_print_json(raw: &amp;str, indent: &amp;str) {
 cross build --target x86_64-unknown-linux-gnu --release
 
 \`\`\`
+
+\## 源代码
+
+[github](<https://github.com/b40yd/parsehttp>)
 
 ---
 
