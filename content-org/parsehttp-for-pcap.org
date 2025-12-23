@@ -37,7 +37,8 @@
 
 为了让 A 到 B 的请求和 B 到 A 的响应能找到同一个“账本”，我们定义了一个无视方向的 `FlowKey`：
 
-```rust
+#+begin_src 
+
 impl FlowKey {
     fn new(src: IpAddr, src_port: u16, dst: IpAddr, dst_port: u16) -> Self {
         // 始终让地址/端口较小的一方排在前面，确保双向流量 Key 一致
@@ -50,20 +51,19 @@ impl FlowKey {
     }
 }
 
-```
+#+end_src
 
 *** 2.2 严谨的状态机隔离
 
 程序通过 `TransactionState` 追踪每个 HTTP 事务的生命周期，确保数据不会“张冠李戴”。
 
-```rust
+#+begin_src 
 enum TransactionState {
     RequestBody,    // 正在收集请求体（如 POST 的 JSON）
     ResponseHeader, // 正在等待响应头
     ResponseBody,   // 正在收集响应体或 SSE 事件
 }
-
-```
+#+end_src
 
 ---
 
@@ -75,13 +75,12 @@ enum TransactionState {
 
 1. **解析请求头**：使用 `httparse` 库。如果解析成功，提取 `Content-Length` 并转入 `RequestBody` 状态。
 2. **消费 Body**：
-```rust
+#+begin_src 
 let remaining = tx.expected_req_len - tx.req_body.len();
 let take = std::cmp::min(remaining, stream.data.len());
 tx.req_body.extend_from_slice(&stream.data[..take]);
 consumed = take;
-
-```
+#+end_src
 
 
 这种**精确计数消费**的方式保证了即使 Body 后面紧跟响应包，也不会误读数据。
@@ -90,7 +89,7 @@ consumed = take;
 
 当检测到 `Content-Type: text/event-stream` 时，程序进入流式模式：
 
-```rust
+#+begin_src 
 if tx.is_sse {
     let body_part = String::from_utf8_lossy(&stream.data).to_string();
     for event in body_part.split("\n\n") {
@@ -101,7 +100,7 @@ if tx.is_sse {
     consumed = stream.data.len();
 }
 
-```
+#+end_src
 
 SSE 消息以 `\n\n` 分隔。我们将每个事件存入 `res_body_events` 列表，直到下一个请求到来时统一 Flush 输出。
 
@@ -109,7 +108,7 @@ SSE 消息以 `\n\n` 分隔。我们将每个事件存入 `res_body_events` 列�
 
 为了提高可读性，程序对 JSON 进行了自动识别与缩进：
 
-```rust
+#+begin_src 
 fn pretty_print_json(raw: &str, indent: &str) {
     // 自动剥离 SSE 的 "data: " 前缀
     let clean = raw.strip_prefix("data: ").unwrap_or(raw).trim();
@@ -122,7 +121,7 @@ fn pretty_print_json(raw: &str, indent: &str) {
     println!("{}{}", indent, raw);
 }
 
-```
+#+end_src
 
 ---
 
@@ -139,7 +138,7 @@ fn pretty_print_json(raw: &str, indent: &str) {
 
 **输出预览：**
 
-```text
+#+begin_src 
 ▶ REQUEST: POST /messages
   Host: api.mcp.com
   [Request Body]
@@ -150,19 +149,19 @@ fn pretty_print_json(raw: &str, indent: &str) {
   [Response Body]
     { "tools": [...] }
 
-```
+#+end_src
+
 
 ---
 
 ** 5. 跨平台编译
 
 为了方便在不同环境中部署，工具支持交叉编译。推荐使用 Docker 容器方案：
-
-```bash
+#+begin_src 
 # 编译为 Linux x86_64
 cross build --target x86_64-unknown-linux-gnu --release
+#+end_src
 
-```
 
 ** 源代码
 

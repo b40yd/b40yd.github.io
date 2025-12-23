@@ -1,7 +1,7 @@
 +++
 title = "构建高性能 MCP 协议分析工具：基于 Rust 的流量聚合与 SSE 解析实践"
 date = 2025-12-23
-lastmod = 2025-12-23T16:17:27+08:00
+lastmod = 2025-12-23T16:22:55+08:00
 tags = ["MCP", "SSE", "pcap", "http"]
 categories = ["MCP", "SSE", "pcap", "http"]
 draft = false
@@ -37,11 +37,12 @@ author = "B40yd"
 
 为了让 A 到 B 的请求和 B 到 A 的响应能找到同一个“账本”，我们定义了一个无视方向的 \`FlowKey\`：
 
-\`\`\`rust
+```nil
+
 impl FlowKey {
-    fn new(src: IpAddr, src_port: u16, dst: IpAddr, dst_port: u16) -&gt; Self {
+    fn new(src: IpAddr, src_port: u16, dst: IpAddr, dst_port: u16) -> Self {
         // 始终让地址/端口较小的一方排在前面，确保双向流量 Key 一致
-        let (a, pa, b, pb) = if (src, src_port) &lt; (dst, dst_port) {
+        let (a, pa, b, pb) = if (src, src_port) < (dst, dst_port) {
             (src, src_port, dst, dst_port)
         } else {
             (dst, dst_port, src, src_port)
@@ -50,21 +51,20 @@ impl FlowKey {
     }
 }
 
-\`\`\`
+```
 
 
 ## 2.2 严谨的状态机隔离 {#2-dot-2-严谨的状态机隔离}
 
 程序通过 \`TransactionState\` 追踪每个 HTTP 事务的生命周期，确保数据不会“张冠李戴”。
 
-\`\`\`rust
+```nil
 enum TransactionState {
-    RequestBody,    _/ 正在收集请求体（如 POST 的 JSON）
-    ResponseHeader, /_ 正在等待响应头
+    RequestBody,    // 正在收集请求体（如 POST 的 JSON）
+    ResponseHeader, // 正在等待响应头
     ResponseBody,   // 正在收集响应体或 SSE 事件
 }
-
-\`\`\`
+```
 
 ---
 
@@ -79,13 +79,14 @@ enum TransactionState {
 1.  \*\*解析请求头\*\*：使用 \`httparse\` 库。如果解析成功，提取 \`Content-Length\` 并转入 \`RequestBody\` 状态。
 2.  \*\*消费 Body\*\*：
 
-\`\`\`rust
+<!--listend-->
+
+```nil
 let remaining = tx.expected_req_len - tx.req_body.len();
 let take = std::cmp::min(remaining, stream.data.len());
-tx.req_body.extend_from_slice(&amp;stream.data[..take]);
+tx.req_body.extend_from_slice(&stream.data[..take]);
 consumed = take;
-
-\`\`\`
+```
 
 这种\*\*精确计数消费\*\*的方式保证了即使 Body 后面紧跟响应包，也不会误读数据。
 
@@ -94,9 +95,9 @@ consumed = take;
 
 当检测到 \`Content-Type: text/event-stream\` 时，程序进入流式模式：
 
-\`\`\`rust
+```nil
 if tx.is_sse {
-    let body_part = String::from_utf8_lossy(&amp;stream.data).to_string();
+    let body_part = String::from_utf8_lossy(&stream.data).to_string();
     for event in body_part.split("\n\n") {
         if !event.trim().is_empty() {
             tx.res_body_events.push(event.trim().to_string());
@@ -105,7 +106,7 @@ if tx.is_sse {
     consumed = stream.data.len();
 }
 
-\`\`\`
+```
 
 SSE 消息以 \`\n\n\` 分隔。我们将每个事件存入 \`res_body_events\` 列表，直到下一个请求到来时统一 Flush 输出。
 
@@ -114,12 +115,12 @@ SSE 消息以 \`\n\n\` 分隔。我们将每个事件存入 \`res_body_events\` 
 
 为了提高可读性，程序对 JSON 进行了自动识别与缩进：
 
-\`\`\`rust
-fn pretty_print_json(raw: &amp;str, indent: &amp;str) {
+```nil
+fn pretty_print_json(raw: &str, indent: &str) {
     // 自动剥离 SSE 的 "data: " 前缀
     let clean = raw.strip_prefix("data: ").unwrap_or(raw).trim();
-    if let Ok(json) = serde_json::from_str::&lt;serde_json::Value&gt;(clean) {
-        if let Ok(pretty) = serde_json::to_string_pretty(&amp;json) {
+    if let Ok(json) = serde_json::from_str::<serde_json::Value>(clean) {
+        if let Ok(pretty) = serde_json::to_string_pretty(&json) {
             for line in pretty.lines() { println!("{}{}", indent, line); }
             return;
         }
@@ -127,7 +128,7 @@ fn pretty_print_json(raw: &amp;str, indent: &amp;str) {
     println!("{}{}", indent, raw);
 }
 
-\`\`\`
+```
 
 ---
 
@@ -146,7 +147,7 @@ fn pretty_print_json(raw: &amp;str, indent: &amp;str) {
 
 ****输出预览：****
 
-\`\`\`text
+```nil
 ▶ REQUEST: POST /messages
   Host: api.mcp.com
   [Request Body]
@@ -157,7 +158,7 @@ fn pretty_print_json(raw: &amp;str, indent: &amp;str) {
   [Response Body]
     { "tools": [...] }
 
-\`\`\`
+```
 
 ---
 
@@ -166,11 +167,10 @@ fn pretty_print_json(raw: &amp;str, indent: &amp;str) {
 
 为了方便在不同环境中部署，工具支持交叉编译。推荐使用 Docker 容器方案：
 
-\`\`\`bash
-
+```nil
+# 编译为 Linux x86_64
 cross build --target x86_64-unknown-linux-gnu --release
-
-\`\`\`
+```
 
 
 ## 源代码 {#源代码}
