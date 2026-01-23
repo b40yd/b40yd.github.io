@@ -8,7 +8,7 @@ draft = false
 author = "b40yd"
 +++
 
-![](opencode-info.png)
+![](/opencode-info.png)
 ### 1. OpenCode 简介
 
 - OpenCode 是一个热门的 AI 编程工具，可视为开源版的 Claude Code。它具有以下优势：
