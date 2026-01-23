@@ -1,3 +1,13 @@
++++
+title = "OpenCode 安装与使用"
+date = 2026-01-23
+lastmod = 2026-01-23T18:45:56+08:00
+tags = ["opencode", "oh-my-opencode", "agent", "Claude Code"]
+categories = ["opencode", "oh-my-opencode", "agent", "Claude Code"]
+draft = false
+author = "b40yd"
++++
+
 ![](opencode-info.png)
 ### 1. OpenCode 简介
 
